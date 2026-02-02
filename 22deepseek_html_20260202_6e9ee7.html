@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16人格趣味测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        // Tailwind 配置
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        secondary: '#8B5CF6',
+                        neutral: '#F3F4F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                        '3xl': '2rem',
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .gradient-bg {
+                background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            }
+            .gradient-card {
+                background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            }
+            .option-hover {
+                transition: all 0.3s ease;
+            }
+            .option-hover:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1);
+            }
+            .progress-bar {
+                background: linear-gradient(90deg, #6366F1, #8B5CF6);
+            }
+            /* 优化毛玻璃效果 */
+            .result-card {
+                border-radius: 1.5rem;
+                backdrop-filter: blur(15px) saturate(180%);
+                -webkit-backdrop-filter: blur(15px) saturate(180%);
+                background: rgba(255, 255, 255, 0.65);
+                border: 1px solid rgba(209, 213, 219, 0.3);
+            }
+            /* 毛玻璃内容块 */
+            .glass-block {
+                backdrop-filter: blur(12px) saturate(160%);
+                -webkit-backdrop-filter: blur(12px) saturate(160%);
+                background: rgba(255, 255, 255, 0.75);
+                border: 1px solid rgba(209, 213, 219, 0.2);
+                border-radius: 1rem;
+            }
+            /* 修复按钮文字居中的样式 */
+            .btn-center {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .option-selected {
+                border: 2px solid #6366F1 !important;
+                background-color: rgba(99, 102, 241, 0.1);
+            }
+            /* 优化头像容器，提升占比 */
+            .avatar-container {
+                width: 100%;
+                height: 380px; /* 提升高度占比 */
+                min-height: 320px;
+                border-radius: 1.5rem;
+                overflow: hidden;
+                box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
+            }
+            .avatar-container img,
+            .avatar-container svg {
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: cover;
+            }
+            /* 响应式调整 */
+            @media (max-width: 768px) {
+                .avatar-container {
+                    height: 280px;
+                    min-height: 250px;
+                }
+            }
+            @media (max-width: 480px) {
+                .avatar-container {
+                    height: 240px;
+                    min-height: 220px;
+                }
+            }
+            .decor-line {
+                height: 1px;
+                background: currentColor;
+                opacity: 0.3;
+            }
+            .decor-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: currentColor;
+            }
+        }  
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+    <!-- 首页 -->
+    <div id="home-container" class="container mx-auto px-4 py-8 max-w-4xl min-h-[80vh] flex flex-col justify-start items-center pt-4">
+        <div class="gradient-card rounded-3xl p-10 shadow-xl w-full text-center">
+            <div class="mb-8">
+                <div class="inline-block p-4 rounded-full gradient-bg mb-6">
+                    <i class="fa fa-user-circle-o text-5xl text-white"></i>
+                </div>
+                <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">16人格趣味测试</h1>
+                <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                    通过36道趣味题目，探索你的人格特质，了解真实的自己，发现独特的性格优势
+                </p>
+            </div>
+            
+            <div class="space-y-6 max-w-md mx-auto text-left">
+                <div class="flex items-start">
+                    <i class="fa fa-check-circle text-primary mt-1 mr-3 text-xl"></i>
+                    <div>
+                        <h3 class="font-semibold text-lg">专业维度</h3>
+                        <p class="text-slate-500">基于经典16人格理论，从4个维度解析你的性格</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="fa fa-check-circle text-primary mt-1 mr-3 text-xl"></i>
+                    <div>
+                        <h3 class="font-semibold text-lg">趣味体验</h3>
+                        <p class="text-slate-500">轻松有趣的题目，无需专业知识也能参与</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="fa fa-check-circle text-primary mt-1 mr-3 text-xl"></i>
+                    <div>
+                        <h3 class="font-semibold text-lg">详细报告</h3>
+                        <p class="text-slate-500">生成专属人格画像，了解优势与改进方向</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="start-btn" class="mt-10 px-10 py-4 rounded-2xl gradient-bg text-white font-medium text-lg btn-center w-full max-w-md hover:shadow-lg transition-all">
+                <i class="fa fa-play-circle mr-2"></i>开始测试
+            </button>
+        </div>
+        
+        <p class="mt-8 text-slate-500 text-sm">
+            测试仅供娱乐，结果不代表专业心理评估
+        </p>
+    </div>
+
+    <!-- 测试页面 -->
+    <div id="test-container" class="container mx-auto px-4 py-8 max-w-3xl hidden">
+        <!-- 进度条 -->
+        <div class="w-full h-2 bg-slate-200 rounded-full mb-8 overflow-hidden">
+            <div id="progress-bar" class="progress-bar h-full w-0 transition-all duration-300"></div>
+        </div>
+        
+        <!-- 题目区域 -->
+        <div class="gradient-card rounded-3xl p-8 shadow-lg mb-8">
+            <div class="text-lg text-slate-500 mb-2" id="question-number">第 1 题 / 共 36 题</div>
+            <div class="text-2xl font-bold mb-8" id="question-text">加载中...</div>
+            
+            <!-- 选项区域 -->
+            <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- 选项会通过JS动态生成 -->
+            </div>
+        </div>
+        
+        <!-- 导航按钮 -->
+        <div class="flex justify-between items-center">
+            <button id="prev-btn" class="px-6 py-3 rounded-2xl gradient-bg text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed btn-center" disabled>
+                <i class="fa fa-arrow-left mr-2"></i>上一题
+            </button>
+            <button id="next-btn" class="px-6 py-3 rounded-2xl gradient-bg text-white font-medium btn-center">
+                下一题<i class="fa fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 结果页面（核心优化） -->
+    <div id="result-container" class="container mx-auto px-4 py-8 max-w-5xl hidden">
+        <!-- 主结果卡片 - 底图+毛玻璃布局 -->
+        <div id="result-card-main" class="relative rounded-3xl overflow-hidden shadow-2xl mb-8">
+            <!-- 背景大图（占满整个卡片宽度） -->
+            <div class="absolute inset-0 z-0">
+                <div id="result-bg-image" class="w-full h-full bg-cover bg-center" style="background-image: url('https://picsum.photos/1200/800'); opacity: 0.25;"></div>
+            </div>
+            
+            <!-- 内容层 - 毛玻璃容器 -->
+            <div class="relative z-10 p-6 md:p-8 lg:p-10">
+                <div class="flex flex-col lg:flex-row gap-6 lg:gap-10 items-center lg:items-start">
+                    <!-- 左侧头像区域（大幅提升占比） -->
+                    <div class="lg:w-3/5 w-full">
+                        <div id="personality-avatar" class="avatar-container mx-auto"></div>
+                        <!-- 装饰点 -->
+                        <div class="flex justify-center mt-6 space-x-3">
+                            <div class="decor-dot text-primary"></div>
+                            <div class="decor-dot text-primary"></div>
+                            <div class="decor-dot text-primary"></div>
+                       </div>
+                    </div>
+                    
+                    <!-- 右侧内容区域（毛玻璃分块） -->
+                    <div class="lg:w-2/5 w-full space-y-6">
+                        <!-- 人格标题块 -->
+                        <div class="glass-block p-6">
+                            <div class="flex items-center mb-4">
+                                <div id="color-indicator" class="w-12 h-12 rounded-full mr-4 shadow-lg"></div>
+                                <h2 id="personality-title" class="text-2xl md:text-3xl font-bold"></h2>
+                            </div>
+                            <!-- 角色画像 -->
+                            <div>
+                                <h3 class="text-xl font-semibold mb-3 text-slate-700 flex items-center">
+                                    角色画像 
+                                    <div class="decor-line text-slate-400 ml-3 flex-1"></div>
+                                </h3>
+                                <p id="personality-portrait" class="text-slate-600 leading-relaxed text-lg"></p>
+                            </div>
+                        </div>
+                        
+                        <!-- 优势与不足 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="glass-block p-5">
+                                <h3 class="text-lg font-semibold mb-3 text-green-600 flex items-center">
+                                    ✨ 优势 
+                                    <div class="decor-line text-green-600 ml-3 flex-1"></div>
+                                </h3>
+                                <ul id="personality-strengths" class="text-slate-600 list-disc list-inside space-y-2 text-sm md:text-base"></ul>
+                            </div>
+                            <div class="glass-block p-5">
+                                <h3 class="text-lg font-semibold mb-3 text-orange-600 flex items-center">
+                                    ⚠️ 不足 
+                                    <div class="decor-line text-orange-600 ml-3 flex-1"></div>
+                                </h3>
+                                <ul id="personality-weaknesses" class="text-slate-600 list-disc list-inside space-y-2 text-sm md:text-base"></ul>
+                            </div>
+                        </div>
+                        
+                        <!-- 深度分析 -->
+                        <div class="glass-block p-6">
+                            <h3 class="text-lg font-semibold mb-3 text-purple-600 flex items-center">
+                                📊 深度分析 
+                                <div class="decor-line text-purple-600 ml-3 flex-1"></div>
+                            </h3>
+                            <div id="personality-deep-analysis" class="text-slate-600 leading-relaxed text-sm md:text-base space-y-3"></div>
+                        </div>
+                        
+                        <!-- 适合领域 + 改进建议 -->
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="glass-block p-5">
+                                <h3 class="text-lg font-semibold mb-3 text-teal-600 flex items-center">
+                                    🎯 适合领域 
+                                    <div class="decor-line text-teal-600 ml-3 flex-1"></div>
+                                </h3>
+                                <div id="personality-suitable-fields" class="text-slate-600 leading-relaxed text-sm md:text-base"></div>
+                            </div>
+                            <div class="glass-block p-5">
+                                <h3 class="text-lg font-semibold mb-3 text-blue-600 flex items-center">
+                                    💡 改进建议 
+                                    <div class="decor-line text-blue-600 ml-3 flex-1"></div>
+                                </h3>
+                                <p id="personality-suggestions" class="text-slate-600 leading-relaxed text-sm md:text-base"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 操作按钮 -->
+        <div class="flex flex-wrap gap-4 justify-center w-full">
+            <button id="share-btn" class="px-8 py-4 rounded-2xl gradient-bg text-white font-medium btn-center min-w-[180px] hover:shadow-lg transition-all">
+                <i class="fa fa-weixin mr-2 text-xl"></i>分享到微信
+            </button>
+            <button id="save-btn" class="px-8 py-4 rounded-2xl bg-slate-800 text-white font-medium btn-center min-w-[180px] hover:shadow-lg transition-all">
+                <i class="fa fa-download mr-2"></i>保存到本地
+            </button>
+            <button id="restart-btn" class="px-8 py-4 rounded-2xl bg-slate-200 text-slate-800 font-medium btn-center min-w-[180px] hover:shadow-lg transition-all">
+                <i class="fa fa-refresh mr-2"></i>重新测试
+            </button>
+        </div>
+        
+        <!-- 分享二维码弹窗 -->
+        <div id="qrcode-modal" class="fixed inset-0 bg-black/50 flex justify-center items-center hidden z-50">
+            <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold">分享到微信</h3>
+                    <button id="close-modal" class="text-slate-500 hover:text-slate-800 transition-colors">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="flex justify-center mb-4">
+                    <div id="qrcode-container" class="w-64 h-64"></div>
+                </div>
+                <p class="text-center text-slate-500">扫码查看你的人格测试结果</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentQuestionIndex = 0; // 当前题目索引
+        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 }; // 各维度得分
+        let userAnswers = new Array(36).fill(null); // 存储用户答案
+        let currentPersonalityType = ''; // 当前测试出的人格类型
+        
+        // 题库数据 (36道新颖有趣的题目)
+        const questions = [
+            { id: 1, text: "周末计划被打乱时，你的第一反应是？", options: [
+                { text: "烦躁，想尽快恢复原计划", score: { J: 2, P: 0 } },
+                { text: "无所谓，随机应变反而更有趣", score: { J: 0, P: 2 } }
+            ]},
+            { id: 2, text: "和朋友聊天时，你更倾向于？", options: [
+                { text: "分享最近的经历和感受", score: { E: 2, I: 0 } },
+                { text: "倾听对方的故事，偶尔回应", score: { E: 0, I: 2 } }
+            ]},
+            { id: 3, text: "做决定时，你更依赖？", options: [
+                { text: "理性分析和逻辑判断", score: { T: 2, F: 0 } },
+                { text: "直觉感受和他人情绪", score: { T: 0, F: 2 } }
+            ]},
+            { id: 4, text: "面对新环境，你会？", options: [
+                { text: "先观察了解，再慢慢融入", score: { S: 2, N: 0 } },
+                { text: "立刻探索，想象各种可能性", score: { S: 0, N: 2 } }
+            ]},
+            { id: 5, text: "收到即时消息，你会？", options: [
+                { text: "立刻回复，不喜欢拖延", score: { J: 2, P: 0 } },
+                { text: "先忙自己的事，有空再回", score: { J: 0, P: 2 } }
+            ]},
+            { id: 6, text: "聚会结束后，你感觉？", options: [
+                { text: "精力充沛，还想继续玩", score: { E: 2, I: 0 } },
+                { text: "需要独处充电，感到疲惫", score: { E: 0, I: 2 } }
+            ]},
+            { id: 7, text: "评价电影时，你更看重？", options: [
+                { text: "剧情逻辑和细节合理性", score: { S: 2, N: 0 } },
+                { text: "整体意境和想象空间", score: { S: 0, N: 2 } }
+            ]},
+            { id: 8, text: "朋友吵架，你会？", options: [
+                { text: "客观分析对错，给出建议", score: { T: 2, F: 0 } },
+                { text: "先安抚情绪，再慢慢沟通", score: { T: 0, F: 2 } }
+            ]},
+            { id: 9, text: "学习新技能，你会？", options: [
+                { text: "制定详细计划，按步骤学习", score: { J: 2, P: 0 } },
+                { text: "边学边试，遇到问题再调整", score: { J: 0, P: 2 } }
+            ]},
+            { id: 10, text: "空闲时间，你更想？", options: [
+                { text: "和朋友出去玩，热闹一下", score: { E: 2, I: 0 } },
+                { text: "宅在家里，做自己喜欢的事", score: { E: 0, I: 2 } }
+            ]},
+            { id: 11, text: "解决问题时，你会？", options: [
+                { text: "基于现有经验和事实", score: { S: 2, N: 0 } },
+                { text: "尝试创新方法，跳出框架", score: { S: 0, N: 2 } }
+            ]},
+            { id: 12, text: "买东西时，你会？", options: [
+                { text: "对比性价比，理性选择", score: { T: 2, F: 0 } },
+                { text: "凭感觉喜欢，感性决策", score: { T: 0, F: 2 } }
+            ]},
+            { id: 13, text: "旅行前，你会？", options: [
+                { text: "做好详细攻略，预订好一切", score: { J: 2, P: 0 } },
+                { text: "只定大致方向，随缘探索", score: { J: 0, P: 2 } }
+            ]},
+            { id: 14, text: "遇到陌生人，你会？", options: [
+                { text: "主动搭话，轻松建立联系", score: { E: 2, I: 0 } },
+                { text: "保持距离，熟悉后才放开", score: { E: 0, I: 2 } }
+            ]},
+            { id: 15, text: "看待未来，你更？", options: [
+                { text: "关注实际可实现的目标", score: { S: 2, N: 0 } },
+                { text: "充满幻想，期待各种可能", score: { S: 0, N: 2 } }
+            ]},
+            { id: 16, text: "团队合作中，你更？", options: [
+                { text: "注重效率和结果", score: { T: 2, F: 0 } },
+                { text: "注重氛围和人际关系", score: { T: 0, F: 2 } }
+            ]},
+            { id: 17, text: "工作习惯上，你？", options: [
+                { text: "喜欢提前完成，避免赶截止日期", score: { J: 2, P: 0 } },
+                { text: "习惯最后冲刺，压力下效率更高", score: { J: 0, P: 2 } }
+            ]},
+            { id: 18, text: "情绪低落时，你会？", options: [
+                { text: "找人倾诉，获得安慰", score: { E: 2, I: 0 } },
+                { text: "自我消化，独处冷静", score: { E: 0, I: 2 } }
+            ]},
+            { id: 19, text: "阅读偏好，你更喜欢？", options: [
+                { text: "纪实、实用类书籍", score: { S: 2, N: 0 } },
+                { text: "科幻、幻想类书籍", score: { S: 0, N: 2 } }
+            ]},
+            { id: 20, text: "批评他人时，你会？", options: [
+                { text: "直接指出问题，就事论事", score: { T: 2, F: 0 } },
+                { text: "委婉表达，顾及对方感受", score: { T: 0, F: 2 } }
+            ]},
+            { id: 21, text: "整理物品时，你会？", options: [
+                { text: "分类清晰，井然有序", score: { J: 2, P: 0 } },
+                { text: "随性摆放，只要自己能找到", score: { J: 0, P: 2 } }
+            ]},
+            { id: 22, text: "社交能量来源是？", options: [
+                { text: "和他人互动", score: { E: 2, I: 0 } },
+                { text: "独自思考", score: { E: 0, I: 2 } }
+            ]},
+            { id: 23, text: "记忆特点是？", options: [
+                { text: "擅长记住具体细节和事实", score: { S: 2, N: 0 } },
+                { text: "擅长记住整体框架和概念", score: { S: 0, N: 2 } }
+            ]},
+            { id: 24, text: "决策风格是？", options: [
+                { text: "依据原则和公平性", score: { T: 2, F: 0 } },
+                { text: "依据人情和特殊性", score: { T: 0, F: 2 } }
+            ]},
+            { id: 25, text: "面对变化，你？", options: [
+                { text: "需要时间适应，喜欢稳定", score: { J: 2, P: 0 } },
+                { text: "乐于尝试，适应能力强", score: { J: 0, P: 2 } }
+            ]},
+            { id: 26, text: "表达想法时，你？", options: [
+                { text: "喜欢多说，边说边整理思路", score: { E: 2, I: 0 } },
+                { text: "先想清楚，再简洁表达", score: { E: 0, I: 2 } }
+            ]},
+            { id: 27, text: "兴趣爱好偏向？", options: [
+                { text: "动手实践类（烹饪、手工）", score: { S: 2, N: 0 } },
+                { text: "创意想象类（绘画、写作）", score: { S: 0, N: 2 } }
+            ]},
+            { id: 28, text: "处理冲突时，你？", options: [
+                { text: "追求公正，不怕直面问题", score: { T: 2, F: 0 } },
+                { text: "追求和谐，尽量避免冲突", score: { T: 0, F: 2 } }
+            ]},
+            { id: 29, text: "时间管理上，你？", options: [
+                { text: "严格遵守时间表", score: { J: 2, P: 0 } },
+                { text: "灵活调整，顺其自然", score: { J: 0, P: 2 } }
+            ]},
+            { id: 30, text: "聚会中，你通常是？", options: [
+                { text: "活跃气氛的中心人物", score: { E: 2, I: 0 } },
+                { text: "安静观察的旁观者", score: { E: 0, I: 2 } }
+            ]},
+            { id: 31, text: "解决难题时，你？", options: [
+                { text: "一步一步分析解决", score: { S: 2, N: 0 } },
+                { text: "先找整体思路，再填细节", score: { S: 0, N: 2 } }
+            ]},
+            { id: 32, text: "职业选择更看重？", options: [
+                { text: "发展前景和薪资待遇", score: { T: 2, F: 0 } },
+                { text: "兴趣爱好和工作氛围", score: { T: 0, F: 2 } }
+            ]},
+            { id: 33, text: "购物习惯是？", options: [
+                { text: "列清单，按计划购买", score: { J: 2, P: 0 } },
+                { text: "即兴购买，看到喜欢就买", score: { J: 0, P: 2 } }
+            ]},
+            { id: 34, text: "获取能量的方式是？", options: [
+                { text: "外出社交，接触新鲜事物", score: { E: 2, I: 0 } },
+                { text: "居家休息，享受安静时光", score: { E: 0, I: 2 } }
+            ]},
+            { id: 35, text: "思考方式偏向？", options: [
+                { text: "具体、实际、当下", score: { S: 2, N: 0 } },
+                { text: "抽象、理论、未来", score: { S: 0, N: 2 } }
+            ]},
+            { id: 36, text: "生活态度更倾向？", options: [
+                { text: "理性规划，掌控生活", score: { T: 2, F: 0 } },
+                { text: "感性体验，享受生活", score: { T: 0, F: 2 } }
+            ]}
+        ];
+
+        // 16人格类型数据 (完整修复截断问题)
+        const personalityTypes = {
+            ISTJ: {
+                name: "物流师型 - 实际的组织者",
+                color: "#3B82F6",
+                portrait: "你是一个注重实际、责任感强的人，喜欢秩序和稳定，做事严谨可靠，是团队中值得信赖的执行者。",
+                strengths: ["责任心强", "稳重可靠", "逻辑清晰", "注重细节"],
+                weaknesses: ["过于保守", "不擅变通", "情感表达不足", "对变化敏感"],
+                suggestions: "尝试接受不确定性，偶尔跳出舒适区；学会表达自己的情感，多倾听他人的创新想法。",
+                deepAnalysis: [
+                    "你天生具备极强的责任感和可靠性，承诺的事情一定会尽力完成，是团队中最值得托付的人。",
+                    "你对规则和秩序有天然的偏好，善于建立和维护稳定的工作流程，确保一切按部就班。",
+                    "你注重实际和实用，不喜欢虚无缥缈的幻想，做决策时更依赖经验和事实而非直觉。",
+                    "在人际关系中，你虽然不擅长表达情感，但会用实际行动来关心和支持身边的人。"
+                ],
+                suitableFields: "适合领域：会计、审计、工程、法律、行政管理、物流管理、质量控制、军警等需要严谨和责任心的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#istj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#3B82F6"/><circle cx="115" cy="70" r="8" fill="#3B82F6"/><path d="M80 100 Q 100 120 120 100" stroke="#3B82F6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="istj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#2563EB"/></linearGradient></defs></svg>`
+            },
+            ISFJ: {
+                name: "守卫者型 - 专注的保护者",
+                color: "#10B981",
+                portrait: "你是一个富有同情心、细心体贴的人，乐于照顾他人，重视和谐与稳定，是亲友们的坚实后盾。",
+                strengths: ["富有爱心", "耐心细致", "忠诚可靠", "乐于助人"],
+                weaknesses: ["过度付出", "害怕冲突", "缺乏自信", "难以拒绝他人"],
+                suggestions: "学会设定边界，优先照顾自己的需求；增强自我肯定，勇敢表达自己的想法和感受。",
+                deepAnalysis: [
+                    "你拥有极强的共情能力，能敏锐感知他人的情绪和需求，总是愿意伸出援手帮助有需要的人。",
+                    "你重视人际关系的和谐，会尽力避免冲突，愿意为了维持和平而做出让步和妥协。",
+                    "你对身边的人充满责任感，尤其关心家人和朋友的福祉，是亲友圈中的"守护者"和"照顾者"。",
+                    "你注重细节和实用性，善于把日常事务打理得井井有条，让生活和工作环境温馨而有序。"
+                ],
+                suitableFields: "适合领域：护理、教育、社会工作、人力资源、客服、行政助理、医疗保健、餐饮服务等需要关怀和耐心的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#isfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#10B981"/><circle cx="115" cy="70" r="8" fill="#10B981"/><path d="M80 100 Q 100 110 120 100" stroke="#10B981" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="isfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs></svg>`
+            },
+            INFJ: {
+                name: "提倡者型 - 安静的理想主义者",
+                color: "#8B5CF6",
+                portrait: "你是一个富有洞察力、充满理想的人，善于思考人生意义，致力于帮助他人成长，拥有强大的直觉和共情能力。",
+                strengths: ["洞察力强", "富有创意", "坚定执着", "善于共情"],
+                weaknesses: ["过度思考", "容易疲惫", "完美主义", "难以放下"],
+                suggestions: "学会活在当下，避免过度思虑；接受不完美，给自己和他人更多包容。",
+                deepAnalysis: [
+                    "你拥有罕见的洞察力，能看透事物的本质和他人的真实动机，常常被称为"灵魂的知己"。",
+                    "你是坚定的理想主义者，有自己的人生信仰和价值观，愿意为了追求意义和价值而付出努力。",
+                    "你的直觉能力极强，往往能在信息不完整的情况下做出正确的判断和决策。",
+                    "你渴望深度的、有意义的人际关系，虽然社交圈不大，但每一段关系都非常真挚和深刻。"
+                ],
+                suitableFields: "适合领域：心理咨询、教育、写作、哲学、艺术、公益事业、人力资源、管理咨询等需要洞察力和共情能力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#infj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#8B5CF6"/><circle cx="115" cy="70" r="8" fill="#8B5CF6"/><path d="M80 100 Q 100 115 120 100" stroke="#8B5CF6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="infj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#7C3AED"/></linearGradient></defs></svg>`
+            },
+            INTJ: {
+                name: "建筑师型 - 富有想象力的战略家",
+                color: "#EF4444",
+                portrait: "你是一个富有逻辑、极具战略眼光的人，善于规划未来，追求创新和效率，是天生的问题解决者和领导者。",
+                strengths: ["逻辑缜密", "战略思维", "创新能力", "独立自主"],
+                weaknesses: ["过于理性", "缺乏耐心", "挑剔苛刻", "社交淡漠"],
+                suggestions: "学会关注他人情感，增加人际温度；放慢节奏，欣赏过程中的美好。",
+                deepAnalysis: [
+                    "你拥有卓越的战略思维和长远眼光，善于制定复杂的计划并预见可能的结果，是天生的战略家。",
+                    "你的逻辑思维能力极强，能快速分析问题、识别模式，并找到最有效的解决方案。",
+                    "你追求创新和改进，不满足于现状，总是思考如何让事情变得更好、更高效。",
+                    "你独立自主，不依赖他人的认可，有自己的判断标准，敢于坚持自己的想法即使面对反对。"
+                ],
+                suitableFields: "适合领域：科学研究、技术研发、企业管理、金融分析、战略规划、法律、工程设计、创业等需要战略思维的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#intj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#EF4444"/><circle cx="115" cy="70" r="8" fill="#EF4444"/><path d="M80 100 Q 100 105 120 100" stroke="#EF4444" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="intj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#DC2626"/></linearGradient></defs></svg>`
+            },
+            ISTP: {
+                name: "鉴赏家型 - 大胆的实验家",
+                color: "#F59E0B",
+                portrait: "你是一个务实、灵活的人，善于动手解决问题，喜欢探索和体验新事物，拥有敏锐的观察力和快速反应能力。",
+                strengths: ["动手能力强", "适应性好", "务实高效", "冷静理性"],
+                weaknesses: ["缺乏耐心", "不喜规划", "情感迟钝", "容易厌倦"],
+                suggestions: "学会长期坚持，培养深度兴趣；关注他人感受，增强情感连接。",
+                deepAnalysis: [
+                    "你是天生的动手达人，擅长解决实际问题，能快速理解机械和系统的工作原理并进行修复。",
+                    "你适应性极强，能迅速应对突发情况和变化，在压力下依然保持冷静和高效。",
+                    "你注重当下的体验和实用价值，不喜欢空谈理论，更愿意通过实践和尝试来学习。",
+                    "你好奇心强，喜欢探索新事物和新方法，对机械、技术和户外活动有天然的兴趣。"
+                ],
+                suitableFields: "适合领域：机械工程、电子技术、计算机维修、运动教练、军警、消防员、手工艺、贸易、创业等需要动手能力和应变能力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#istp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#F59E0B"/><circle cx="115" cy="70" r="8" fill="#F59E0B"/><path d="M80 100 Q 100 100 120 100" stroke="#F59E0B" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="istp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs></svg>`
+            },
+            ISFP: {
+                name: "探险家型 - 灵活的艺术家",
+                color: "#EC4899",
+                portrait: "你是一个温柔、敏感的人，热爱生活和美好事物，善于用行动表达情感，享受当下的每一个瞬间。",
+                strengths: ["艺术天赋", "温柔体贴", "真诚坦率", "活在当下"],
+                weaknesses: ["避免冲突", "缺乏规划", "过于敏感", "难以坚持"],
+                suggestions: "学会面对挑战，表达真实想法；制定简单计划，平衡随性与目标。",
+                deepAnalysis: [
+                    "你拥有敏锐的审美和艺术天赋，能发现生活中的美，并通过各种形式表达自己的创造力。",
+                    "你注重个人体验和感受，活在当下，享受生活中的小确幸，不喜欢被规则和计划束缚。",
+                    "你真诚坦率，忠于自己的内心感受，不喜欢虚伪和做作，待人接物都非常真实。",
+                    "你虽然不善于用语言表达情感，但会通过行动、礼物或创造来表达对他人的关心和爱意。"
+                ],
+                suitableFields: "适合领域：艺术设计、音乐、摄影、烹饪、美容、时尚、体育、康复治疗、园艺等需要创造力和审美能力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#isfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#EC4899"/><circle cx="115" cy="70" r="8" fill="#EC4899"/><path d="M80 100 Q 100 110 120 100" stroke="#EC4899" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="isfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EC4899"/><stop offset="100%" stop-color="#DB2777"/></linearGradient></defs></svg>`
+            },
+            INFP: {
+                name: "调停者型 - 充满诗意的理想主义者",
+                color: "#6366F1",
+                portrait: "你是一个富有创造力、充满理想的人，内心丰富敏感，重视个人价值和意义，致力于追求真实和美好。",
+                strengths: ["创造力强", "富有同理心", "真诚善良", "坚持初心"],
+                weaknesses: ["过度敏感", "逃避现实", "优柔寡断", "自我否定"],
+                suggestions: "学会接纳现实，增强抗压能力；相信自己的价值，勇敢行动。",
+                deepAnalysis: [
+                    "你拥有丰富的内心世界和强大的想象力，常常沉浸在自己的思考和幻想中，是天生的梦想家和理想主义者。",
+                    "你对自己的价值观和信仰非常执着，不愿意为了迎合他人而妥协自己的原则和初心。",
+                    "你的共情能力极强，能深刻理解他人的情感和痛苦，是绝佳的倾听者和安慰者。",
+                    "你富有创造力和诗意，善于用文字、艺术等形式表达自己的内心感受和对世界的理解。"
+                ],
+                suitableFields: "适合领域：写作、编辑、艺术、音乐、心理咨询、教育、公益、翻译、哲学等需要创造力和共情能力的领域。",
+                avatar: `<img src="https://gd-hbimg-edge.huaban.com/bab3a240b139796daca11c5ab1fcc828dec6869f46158d-aCg6j3_fw1200webp?auth_key=1770062400-1ff22499b5594d69b4c2050e6d0ebc8f-0-cc63a5f7f286fb116663cbbded0e7053" alt="调停者型人格" class="w-full h-full object-cover rounded-3xl"/>`,
+            },
+            INTP: {
+                name: "逻辑学家型 - 创新的发明家",
+                color: "#14B8A6",
+                portrait: "你是一个富有逻辑、好奇心强的人，热衷于探索抽象概念和理论，善于发现问题本质，拥有独特的思维方式。",
+                strengths: ["逻辑思维", "好奇心强", "创新能力", "客观理性"],
+                weaknesses: ["过度分析", "社交淡漠", "拖延成性", "不切实际"],
+                suggestions: "学会行动优先，避免过度思考；主动建立社交连接，增强现实感。",
+                deepAnalysis: [
+                    "你拥有极强的逻辑思维和分析能力，能快速识别问题的核心，并提出创新的解决方案。",
+                    "你的好奇心永无止境，对抽象概念、理论和未知领域有天然的探索欲望。",
+                    "你善于独立思考，不盲从权威，总是用自己的逻辑体系来验证和理解世界。",
+                    "你追求知识和真理本身，而非功利性的结果，是天生的思想家和发明家。"
+                ],
+                suitableFields: "适合领域：科研、编程、哲学、数学、学术研究、数据分析、设计、创意策划等需要逻辑思维和创新能力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#intp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#14B8A6"/><circle cx="115" cy="70" r="8" fill="#14B8A6"/><path d="M80 100 Q 100 105 120 100" stroke="#14B8A6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="intp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#14B8A6"/><stop offset="100%" stop-color="#0F766E"/></linearGradient></defs></svg>`
+            },
+            ESTP: {
+                name: "企业家型 - 精力充沛的感知者",
+                color: "#F97316",
+                portrait: "你是一个精力充沛、勇于冒险的人，善于把握当下，享受挑战和刺激，拥有出色的应变能力和行动力。",
+                strengths: ["行动力强", "应变灵活", "乐观开朗", "务实高效"],
+                weaknesses: ["缺乏耐心", "冲动行事", "不喜规划", "忽视后果"],
+                suggestions: "学会三思而后行，考虑长远影响；培养耐心，注重长期目标的积累。",
+                deepAnalysis: [
+                    "你天生充满活力和热情，喜欢行动和冒险，不畏惧挑战和未知。",
+                    "你善于把握眼前的机会，能快速做出决策并付诸行动，是天生的行动派。",
+                    "你适应能力极强，能在变化的环境中快速调整策略，找到最佳解决方案。",
+                    "你享受生活中的刺激和乐趣，善于用幽默和热情感染身边的人。"
+                ],
+                suitableFields: "适合领域：销售、创业、公关、演艺、体育、金融交易、市场营销、客服管理等需要应变能力和行动力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#estp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#F97316"/><circle cx="115" cy="70" r="8" fill="#F97316"/><path d="M80 100 Q 100 100 120 100" stroke="#F97316" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="estp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F97316"/><stop offset="100%" stop-color="#EA580C"/></linearGradient></defs></svg>`
+            },
+            ESFP: {
+                name: "表演者型 - 热情的艺人",
+                color: "#BE185D",
+                portrait: "你是一个热情洋溢、善于表达的人，享受社交和关注，善于用活力和魅力感染他人，活在当下且热爱生活。",
+                strengths: ["热情开朗", "善于表达", "富有魅力", "适应力强"],
+                weaknesses: ["缺乏深度", "逃避问题", "冲动消费", "需要关注"],
+                suggestions: "学会深度思考，培养长期兴趣；直面问题而非逃避，增强责任感。",
+                deepAnalysis: [
+                    "你天生充满魅力和表现力，善于吸引他人的注意力，是社交场合中的焦点人物。",
+                    "你热爱生活和体验，善于发现生活中的乐趣，能把平凡的日子过得丰富多彩。",
+                    "你对他人的情绪非常敏感，善于调节气氛，让身边的人感到快乐和放松。",
+                    "你注重实际的体验和感受，不喜欢抽象的理论，更愿意通过亲身经历来学习和成长。"
+                ],
+                suitableFields: "适合领域：演艺、主持、销售、公关、旅游、餐饮、时尚、美容、教育培训等需要表现力和社交能力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#esfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#BE185D"/><circle cx="115" cy="70" r="8" fill="#BE185D"/><path d="M80 100 Q 100 115 120 100" stroke="#BE185D" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="esfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#BE185D"/><stop offset="100%" stop-color="#9D174D"/></linearGradient></defs></svg>`
+            },
+            ENFP: {
+                name: "竞选者型 - 热情的理想主义者",
+                color: "#A855F7",
+                portrait: "你是一个充满热情、富有创意的人，善于发现可能性，激励他人，拥有丰富的想象力和感染力。",
+                strengths: ["富有创意", "热情洋溢", "善于激励", "乐观积极"],
+                weaknesses: ["虎头蛇尾", "过度乐观", "缺乏专注", "敏感脆弱"],
+                suggestions: "学会坚持到底，培养专注力；理性看待问题，平衡理想与现实。",
+                deepAnalysis: [
+                    "你拥有无限的热情和创造力，善于发现新的可能性和机会，是天生的梦想家和激励者。",
+                    "你对他人充满好奇和兴趣，善于建立深度的人际关系，能快速和他人建立情感连接。",
+                    "你的思维跳跃而灵活，能从不同角度看待问题，提出创新的解决方案。",
+                    "你追求意义和价值，愿意为了自己的理想和信念付出努力，激励身边的人一起成长。"
+                ],
+                suitableFields: "适合领域：创意策划、营销、教育、心理咨询、演艺、写作、创业、公益等需要创造力和感染力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#enfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#A855F7"/><circle cx="115" cy="70" r="8" fill="#A855F7"/><path d="M80 100 Q 100 115 120 100" stroke="#A855F7" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="enfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A855F7"/><stop offset="100%" stop-color="#9333EA"/></linearGradient></defs></svg>`
+            },
+            ENTP: {
+                name: "辩论家型 - 聪明的发明家",
+                color: "#2563EB",
+                portrait: "你是一个思维敏捷、善于辩论的人，喜欢挑战传统，富有创新精神，总能提出独特的见解和解决方案。",
+                strengths: ["思维敏捷", "创新能力", "口才出众", "适应力强"],
+                weaknesses: ["过于挑剔", "缺乏耐心", "忽视细节", "喜欢争论"],
+                suggestions: "学会倾听他人，尊重不同观点；注重细节和执行，将创意落地。",
+                deepAnalysis: [
+                    "你拥有敏捷的思维和出色的口才，善于辩论和说服他人，是天生的沟通者和思考者。",
+                    "你喜欢挑战权威和传统，总是质疑现有的规则和模式，寻找更好的解决方案。",
+                    "你的好奇心极强，对各种知识和领域都感兴趣，是典型的"全能型"人才。",
+                    "你善于发现问题并提出创新的解决方案，能在复杂的情况中快速找到突破口。"
+                ],
+                suitableFields: "适合领域：律师、咨询、创业、营销、媒体、科研、设计、公关等需要思维敏捷和创新能力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#entp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#2563EB"/><circle cx="115" cy="70" r="8" fill="#2563EB"/><path d="M80 100 Q 100 105 120 100" stroke="#2563EB" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="entp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#1D4ED8"/></linearGradient></defs></svg>`
+            },
+            ESTJ: {
+                name: "总经理型 - 高效的管理者",
+                color: "#D946EF",
+                portrait: "你是一个果断、务实的人，善于组织和管理，重视效率和结果，是天生的领导者和执行者。",
+                strengths: ["组织能力强", "果断务实", "责任心强", "效率优先"],
+                weaknesses: ["过于强势", "缺乏变通", "忽视情感", "耐心不足"],
+                suggestions: "学会倾听他人意见，关注团队情感；适当变通，接受不同的做事方式。",
+                deepAnalysis: [
+                    "你天生具备领导才能，善于组织和管理团队，能快速建立秩序和规则。",
+                    "你注重效率和结果，不喜欢拖延和模糊，做决策果断且坚定。",
+                    "你责任心极强，对自己和他人都有很高的要求，是团队中可靠的领导者。",
+                    "你善于将复杂的任务分解为可执行的步骤，确保目标的顺利实现。"
+                ],
+                suitableFields: "适合领域：企业管理、行政管理、军警、销售管理、项目管理、金融、法律等需要领导能力和执行力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#estj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#D946EF"/><circle cx="115" cy="70" r="8" fill="#D946EF"/><path d="M80 100 Q 100 100 120 100" stroke="#D946EF" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="estj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D946EF"/><stop offset="100%" stop-color="#C026D3"/></linearGradient></defs></svg>`
+            },
+            ESFJ: {
+                name: "执政官型 - 热心的提供者",
+                color: "#0EA5E9",
+                portrait: "你是一个热情、负责的人，善于社交和照顾他人，重视和谐的人际关系，是团队中的粘合剂和组织者。",
+                strengths: ["热情好客", "善于社交", "责任心强", "善于协调"],
+                weaknesses: ["过度付出", "害怕批评", "缺乏主见", "过于在意他人看法"],
+                suggestions: "学会关注自我需求，建立自我认同；勇敢表达自己的想法，不必过分在意他人评价。",
+                deepAnalysis: [
+                    "你天生热情好客，善于建立和维护人际关系，是社交场合中的"粘合剂"。",
+                    "你重视他人的感受和需求，愿意付出时间和精力来帮助和照顾身边的人。",
+                    "你善于协调不同人的利益和需求，能有效维护团队的和谐与稳定。",
+                    "你对自己的社会责任有清晰的认知，愿意为集体利益付出努力。"
+                ],
+                suitableFields: "适合领域：人力资源、公关、教育、医疗、酒店管理、销售、行政管理、客服管理等需要社交能力和协调能力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#esfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#0EA5E9"/><circle cx="115" cy="70" r="8" fill="#0EA5E9"/><path d="M80 100 Q 100 110 120 100" stroke="#0EA5E9" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="esfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#0284C7"/></linearGradient></defs></svg>`
+            },
+            ENFJ: {
+                name: "教育家型 - 富有魅力的领导者",
+                color: "#16A34A",
+                portrait: "你是一个富有魅力、善于激励的人，关注他人成长，善于引导和启发，是天生的教育家和领导者。",
+                strengths: ["善于激励", "富有魅力", "洞察力强", "乐于助人"],
+                weaknesses: ["过度投入", "难以拒绝", "过于理想", "情感耗竭"],
+                suggestions: "学会设定边界，保护自己的精力；接受现实的不完美，平衡理想与实际。",
+                deepAnalysis: [
+                    "你天生具备领导和激励他人的能力，善于发现他人的潜力并帮助其成长。",
+                    "你对他人的情感和需求有敏锐的洞察力，能快速建立深度的情感连接。",
+                    "你有强烈的社会责任感和理想主义，愿意为了集体利益和他人成长付出努力。",
+                    "你善于沟通和说服，能将自己的愿景转化为团队的共同目标。"
+                ],
+                suitableFields: "适合领域：教育、心理咨询、企业管理、公关、培训、公益、政治、文化传播等需要领导力和共情能力的领域。",
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#enfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#16A34A"/><circle cx="115" cy="70" r="8" fill="#16A34A"/><path d="M80 100 Q 100 115 120 100" stroke="#16A34A" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="enfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#16A34A"/><stop offset="100%" stop-color="#15803D"/></linearGradient></defs></svg>`
+            }
+        };
+
+        // DOM加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定开始测试按钮事件
+            document.getElementById('start-btn').addEventListener('click', function() {
+                // 重置所有数据
+                currentQuestionIndex = 0;
+                scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+                userAnswers = new Array(36).fill(null);
+                
+                // 切换页面显示
+                document.getElementById('home-container').classList.add('hidden');
+                document.getElementById('test-container').classList.remove('hidden');
+                document.getElementById('result-container').classList.add('hidden');
+                
+                // 加载第一题
+                loadQuestion(currentQuestionIndex);
+            });
+
+            // 测试区域DOM元素
+            const optionsContainer = document.getElementById('options-container');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const questionNumber = document.getElementById('question-number');
+            const questionText = document.getElementById('question-text');
+            const progressBar = document.getElementById('progress-bar');
+
+            // 加载题目函数
+            function loadQuestion(index) {
+                const question = questions[index];
+                questionNumber.textContent = `第 ${index + 1} 题 / 共 36 题`;
+                questionText.textContent = question.text;
+                
+                // 清空选项容器
+                optionsContainer.innerHTML = '';
+                
+                // 生成选项
+                question.options.forEach((option, optionIndex) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = `p-4 rounded-2xl border-2 border-slate-200 bg-white option-hover cursor-pointer transition-all ${userAnswers[index] === optionIndex ? 'option-selected' : ''}`;
+                    optionElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center mr-3 ${userAnswers[index] === optionIndex ? 'bg-primary text-white' : 'text-primary'}">
+                                ${String.fromCharCode(65 + optionIndex)}
+                            </div>
+                            <div class="text-lg">${option.text}</div>
+                        </div>
+                    `;
+                    
+                    optionElement.addEventListener('click', function() {
+                        // 如果已经选择过这个选项，取消选择
+                        if (userAnswers[index] === optionIndex) {
+                            userAnswers[index] = null;
+                            // 移除分数
+                            for (const key in option.score) {
+                                scores[key] -= option.score[key];
+                            }
+                        } else {
+                            // 如果之前选择了其他选项，先移除之前的分数
+                            if (userAnswers[index] !== null) {
+                                const prevOption = question.options[userAnswers[index]];
+                                for (const key in prevOption.score) {
+                                    scores[key] -= prevOption.score[key];
+                                }
+                            }
+                            
+                            // 设置当前选择并添加分数
+                            userAnswers[index] = optionIndex;
+                            for (const key in option.score) {
+                                scores[key] += option.score[key];
+                            }
+                        }
+                        
+                        // 重新加载题目以更新选择状态
+                        loadQuestion(index);
+                        
+                        // 更新按钮状态
+                        updateButtons();
+                    });
+                    
+                    optionsContainer.appendChild(optionElement);
+                });
+                
+                // 更新进度条
+                updateProgressBar();
+                // 更新按钮状态
+                updateButtons();
+            }
+
+            // 更新按钮状态函数
+            function updateButtons() {
+                // 上一题按钮
+                prevBtn.disabled = currentQuestionIndex === 0;
+                
+                // 下一题按钮
+                if (currentQuestionIndex === questions.length - 1) {
+                    nextBtn.innerHTML = '查看结果<i class="fa fa-chart-bar ml-2"></i>';
+                } else {
+                    nextBtn.innerHTML = '下一题<i class="fa fa-arrow-right ml-2"></i>';
+                }
+                
+                // 如果当前题目未回答，禁用下一题按钮
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null;
+            }
+
+            // 更新进度条函数
+            function updateProgressBar() {
+                const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+            }
+
+            // 绑定上一题按钮事件
+            prevBtn.addEventListener('click', function() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    loadQuestion(currentQuestionIndex);
+                }
+            });
+
+            // 绑定下一题按钮事件
+            nextBtn.addEventListener('click', function() {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    loadQuestion(currentQuestionIndex);
+                } else if (currentQuestionIndex === questions.length - 1) {
+                    // 最后一道题，计算并显示结果
+                    calculatePersonality();
+                }
+            });
+
+            // 计算人格类型函数
+            function calculatePersonality() {
+                // 确定每个维度的倾向
+                const type = [
+                    scores.E >= scores.I ? 'E' : 'I',
+                    scores.S >= scores.N ? 'S' : 'N',
+                    scores.T >= scores.F ? 'T' : 'F',
+                    scores.J >= scores.P ? 'J' : 'P'
+                ].join('');
+                
+                currentPersonalityType = type;
+                showResult(type);
+            }
+
+            // 显示结果函数
+            function showResult(personalityType) {
+                const personality = personalityTypes[personalityType];
+                
+                // 设置颜色
+                document.getElementById('color-indicator').style.backgroundColor = personality.color;
+                
+                // 设置标题
+                document.getElementById('personality-title').textContent = personality.name;
+                
+                // 设置角色画像
+                document.getElementById('personality-portrait').textContent = personality.portrait;
+                
+                // 设置优势
+                const strengthsList = document.getElementById('personality-strengths');
+                strengthsList.innerHTML = '';
+                personality.strengths.forEach(strength => {
+                    const li = document.createElement('li');
+                    li.textContent = strength;
+                    strengthsList.appendChild(li);
+                });
+                
+                // 设置不足
+                const weaknessesList = document.getElementById('personality-weaknesses');
+                weaknessesList.innerHTML = '';
+                personality.weaknesses.forEach(weakness => {
+                    const li = document.createElement('li');
+                    li.textContent = weakness;
+                    weaknessesList.appendChild(li);
+                });
+                
+                // 设置深度分析
+                const deepAnalysis = document.getElementById('personality-deep-analysis');
+                deepAnalysis.innerHTML = '';
+                personality.deepAnalysis.forEach(paragraph => {
+                    const p = document.createElement('p');
+                    p.textContent = paragraph;
+                    deepAnalysis.appendChild(p);
+                });
+                
+                // 设置适合领域
+                document.getElementById('personality-suitable-fields').textContent = personality.suitableFields;
+                
+                // 设置改进建议
+                document.getElementById('personality-suggestions').textContent = personality.suggestions;
+                
+                // 设置头像
+                document.getElementById('personality-avatar').innerHTML = personality.avatar;
+                
+                // 切换页面显示
+                document.getElementById('test-container').classList.add('hidden');
+                document.getElementById('result-container').classList.remove('hidden');
+            }
+
+            // 绑定分享按钮事件
+            document.getElementById('share-btn').addEventListener('click', function() {
+                // 生成当前页面的URL（实际项目中应该是动态生成的分享链接）
+                const shareUrl = window.location.href + '?type=' + currentPersonalityType;
+                
+                // 清空二维码容器
+                document.getElementById('qrcode-container').innerHTML = '';
+                
+                // 生成二维码
+                QRCode.toCanvas(document.getElementById('qrcode-container'), shareUrl, {
+                    width: 256,
+                    height: 256,
+                    color: {
+                        dark: '#6366F1',
+                        light: '#FFFFFF'
+                    }
+                }, function(error) {
+                    if (error) console.error(error);
+                });
+                
+                // 显示二维码弹窗
+                document.getElementById('qrcode-modal').classList.remove('hidden');
+            });
+
+            // 绑定保存按钮事件
+            document.getElementById('save-btn').addEventListener('click', function() {
+                const resultCard = document.getElementById('result-card-main');
+                
+                html2canvas(resultCard, {
+                    backgroundColor: null,
+                    scale: 2, // 提高分辨率
+                    useCORS: true // 允许跨域图片
+                }).then(canvas => {
+                    // 将canvas转换为图片URL
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    // 创建下载链接
+                    const link = document.createElement('a');
+                    link.download = `16人格测试结果-${currentPersonalityType}.png`;
+                    link.href = imgData;
+                    link.click();
+                });
+            });
+
+            // 绑定重新测试按钮事件
+            document.getElementById('restart-btn').addEventListener('click', function() {
+                // 重置所有数据
+                currentQuestionIndex = 0;
+                scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+                userAnswers = new Array(36).fill(null);
+                
+                // 切换页面
+                document.getElementById('result-container').classList.add('hidden');
+                document.getElementById('test-container').classList.remove('hidden');
+                
+                // 加载第一题
+                loadQuestion(currentQuestionIndex);
+            });
+
+            // 绑定关闭二维码弹窗事件
+            document.getElementById('close-modal').addEventListener('click', function() {
+                document.getElementById('qrcode-modal').classList.add('hidden');
+            });
+
+            // 点击模态框外部关闭
+            document.getElementById('qrcode-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
