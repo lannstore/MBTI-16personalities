@@ -6,7 +6,6 @@
     <title>16人格趣味测试</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
         // Tailwind 配置
@@ -146,6 +145,25 @@
                 height: 0;
                 opacity: 0;
                 pointer-events: none;
+            }
+            /* 按钮对齐方案 */
+            .button-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+                width: 100%;
+            }
+            .button-group button {
+                flex: 1;
+                min-width: 180px;
+                max-width: 240px;
+            }
+            @media (max-width: 640px) {
+                .button-group button {
+                    flex: 1 0 100%;
+                    max-width: 100%;
+                }
             }
         }  
     </style>
@@ -317,33 +335,14 @@
             </div>
         </div>
         
-        <!-- 操作按钮 -->
-        <div class="flex flex-wrap gap-4 justify-center w-full">
-            <button id="share-btn" class="px-8 py-4 rounded-2xl gradient-bg text-white font-medium btn-center min-w-[180px] hover:shadow-lg transition-all">
-                <i class="fa fa-weixin mr-2 text-xl"></i>分享到微信
-            </button>
-            <button id="save-btn" class="px-8 py-4 rounded-2xl bg-slate-800 text-white font-medium btn-center min-w-[180px] hover:shadow-lg transition-all">
+        <!-- 操作按钮 - 更新对齐方案 -->
+        <div class="button-group">
+            <button id="save-btn" class="px-8 py-4 rounded-2xl gradient-bg text-white font-medium btn-center hover:shadow-lg transition-all">
                 <i class="fa fa-download mr-2"></i>保存到本地
             </button>
-            <button id="restart-btn" class="px-8 py-4 rounded-2xl bg-slate-200 text-slate-800 font-medium btn-center min-w-[180px] hover:shadow-lg transition-all">
+            <button id="restart-btn" class="px-8 py-4 rounded-2xl bg-slate-200 text-slate-800 font-medium btn-center hover:shadow-lg transition-all">
                 <i class="fa fa-refresh mr-2"></i>重新测试
             </button>
-        </div>
-        
-        <!-- 分享二维码弹窗 -->
-        <div id="qrcode-modal" class="fixed inset-0 bg-black/50 flex justify-center items-center hidden z-50">
-            <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold">分享到微信</h3>
-                    <button id="close-modal" class="text-slate-500 hover:text-slate-800 transition-colors">
-                        <i class="fa fa-times text-xl"></i>
-                    </button>
-                </div>
-                <div class="flex justify-center mb-4">
-                    <div id="qrcode-container" class="w-64 h-64"></div>
-                </div>
-                <p class="text-center text-slate-500">扫码查看你的人格测试结果</p>
-            </div>
         </div>
     </div>
 
@@ -1051,36 +1050,7 @@
                 }
             }
 
-            // 绑定分享按钮事件
-            const shareBtn = document.getElementById('share-btn');
-            if (shareBtn) {
-                shareBtn.addEventListener('click', function() {
-                    // 生成当前页面的URL
-                    const shareUrl = window.location.href + '?type=' + currentPersonalityType;
-                    
-                    // 清空二维码容器
-                    const qrcodeContainer = document.getElementById('qrcode-container');
-                    if (qrcodeContainer) qrcodeContainer.innerHTML = '';
-                    
-                    // 生成二维码
-                    QRCode.toCanvas(document.getElementById('qrcode-container'), shareUrl, {
-                        width: 256,
-                        height: 256,
-                        color: {
-                            dark: '#6366F1',
-                            light: '#FFFFFF'
-                        }
-                    }, function(error) {
-                        if (error) console.error(error);
-                    });
-                    
-                    // 显示二维码弹窗
-                    const modal = document.getElementById('qrcode-modal');
-                    if (modal) modal.classList.remove('hidden');
-                });
-            }
-
-            // 绑定保存按钮事件 - 修复INFP手机端保存问题
+            // 绑定保存按钮事件 - 修复图片拉伸变形问题
             const saveBtn = document.getElementById('save-btn');
             if (saveBtn) {
                 saveBtn.addEventListener('click', async function() {
@@ -1113,6 +1083,14 @@
                         ]);
                     }
                     
+                    // 修复图片拉伸变形问题 - 在截图前临时移除可能影响布局的样式
+                    const originalAvatarStyle = document.getElementById('personality-avatar').style.cssText;
+                    const originalBgStyle = document.getElementById('bg-image-container').style.cssText;
+                    
+                    // 确保图片容器保持正确的宽高比
+                    document.getElementById('personality-avatar').style.cssText += ';width:100% !important;height:auto !important;max-height:380px !important;aspect-ratio:4/3 !important;';
+                    document.getElementById('bg-image-container').style.cssText += ';width:100% !important;height:100% !important;';
+                    
                     // 移动端调整缩放比例以提升性能
                     const isMobile = window.innerWidth <= 768;
                     const scaleValue = isMobile ? 1.5 : 2;
@@ -1126,6 +1104,10 @@
                             logging: false,
                             imageTimeout: 10000, // 10秒超时
                             removeContainer: true, // 清理临时容器
+                            width: resultCard.offsetWidth, // 显式设置宽度
+                            height: resultCard.offsetHeight, // 显式设置高度
+                            windowWidth: resultCard.scrollWidth, // 确保包含滚动内容
+                            windowHeight: resultCard.scrollHeight, // 确保包含滚动内容
                             onclone: function(clonedDoc) {
                                 // 确保所有图片都有crossorigin属性
                                 const images = clonedDoc.querySelectorAll('img');
@@ -1133,11 +1115,30 @@
                                     if (!img.hasAttribute('crossorigin')) {
                                         img.setAttribute('crossorigin', 'anonymous');
                                     }
-                                    // 强制设置图片显示（针对可能隐藏的图片）
+                                    // 修复图片拉伸问题 - 确保图片保持原始宽高比
+                                    img.style.objectFit = 'contain';
+                                    img.style.width = '100%';
+                                    img.style.height = '100%';
                                     img.style.display = 'block';
                                     img.style.visibility = 'visible';
                                     img.style.opacity = '1';
                                 });
+                                
+                                // 修复背景图片拉伸问题
+                                const bgImage = clonedDoc.getElementById('bg-image-container');
+                                if (bgImage) {
+                                    bgImage.style.width = '100%';
+                                    bgImage.style.height = '100%';
+                                }
+                                
+                                // 修复头像容器拉伸问题
+                                const avatarContainer = clonedDoc.getElementById('personality-avatar');
+                                if (avatarContainer) {
+                                    avatarContainer.style.width = '100%';
+                                    avatarContainer.style.height = 'auto';
+                                    avatarContainer.style.maxHeight = '380px';
+                                    avatarContainer.style.aspectRatio = '4/3';
+                                }
                             }
                         });
                         
@@ -1154,6 +1155,10 @@
                         link.click();
                         document.body.removeChild(link);
                         
+                        // 恢复原始样式
+                        document.getElementById('personality-avatar').style.cssText = originalAvatarStyle;
+                        document.getElementById('bg-image-container').style.cssText = originalBgStyle;
+                        
                         // 恢复按钮状态
                         saveBtn.innerHTML = originalHtml;
                         saveBtn.disabled = false;
@@ -1162,6 +1167,10 @@
                         
                     } catch (error) {
                         console.error('保存图片时出错:', error);
+                        
+                        // 恢复原始样式
+                        document.getElementById('personality-avatar').style.cssText = originalAvatarStyle;
+                        document.getElementById('bg-image-container').style.cssText = originalBgStyle;
                         
                         // 提供用户友好的错误提示
                         if (isMobile) {
@@ -1192,25 +1201,6 @@
                     
                     // 加载第一题
                     loadQuestion(currentQuestionIndex);
-                });
-            }
-
-            // 绑定关闭二维码弹窗事件
-            const closeModalBtn = document.getElementById('close-modal');
-            if (closeModalBtn) {
-                closeModalBtn.addEventListener('click', function() {
-                    const modal = document.getElementById('qrcode-modal');
-                    if (modal) modal.classList.add('hidden');
-                });
-            }
-
-            // 点击模态框外部关闭
-            const modal = document.getElementById('qrcode-modal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        this.classList.add('hidden');
-                    }
                 });
             }
             
