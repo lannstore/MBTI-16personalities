@@ -89,6 +89,20 @@
                 height: 100% !important;
                 object-fit: cover;
             }
+            /* 背景大图容器样式 - 增加高斯模糊 */
+            .bg-image-container {
+                position: absolute;
+                inset: 0;
+                z-index: 0;
+                overflow: hidden;
+            }
+            .bg-image-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                filter: blur(20px); /* 增加高斯模糊 */
+                opacity: 0.9; /* 不透明但朦胧 */
+            }
             /* 响应式调整 */
             @media (max-width: 768px) {
                 .avatar-container {
@@ -112,6 +126,10 @@
                 height: 8px;
                 border-radius: 50%;
                 background: currentColor;
+            }
+            /* 添加hidden类定义 */
+            .hidden {
+                display: none;
             }
         }  
     </style>
@@ -197,9 +215,9 @@
     <div id="result-container" class="container mx-auto px-4 py-8 max-w-5xl hidden">
         <!-- 主结果卡片 - 底图+毛玻璃布局 -->
         <div id="result-card-main" class="relative rounded-3xl overflow-hidden shadow-2xl mb-8">
-            <!-- 背景大图（占满整个卡片宽度） -->
-            <div class="absolute inset-0 z-0">
-                <div id="result-bg-image" class="w-full h-full bg-cover bg-center" style="background-image: url('https://picsum.photos/1200/800'); opacity: 0.25;"></div>
+            <!-- 背景大图（人格角色大图，增加高斯模糊） -->
+            <div id="bg-image-container" class="bg-image-container">
+                <!-- 背景图会通过JS动态设置 -->
             </div>
             
             <!-- 内容层 - 毛玻璃容器 -->
@@ -226,9 +244,9 @@
                             </div>
                             <!-- 角色画像 -->
                             <div>
-                                <h3 class="text-xl font-semibold mb-3 text-slate-700 flex items-center">
-                                    角色画像 
-                                    <div class="decor-line text-slate-400 ml-3 flex-1"></div>
+                                <h3 class="text-xl font-semibold mb-3 text-primary flex items-center">
+                                    <i class="fa fa-user-circle-o mr-2"></i>角色画像 
+                                    <div class="decor-line text-primary/50 ml-3 flex-1"></div>
                                 </h3>
                                 <p id="personality-portrait" class="text-slate-600 leading-relaxed text-lg"></p>
                             </div>
@@ -237,16 +255,16 @@
                         <!-- 优势与不足 -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="glass-block p-5">
-                                <h3 class="text-lg font-semibold mb-3 text-green-600 flex items-center">
-                                    ✨ 优势 
-                                    <div class="decor-line text-green-600 ml-3 flex-1"></div>
+                                <h3 class="text-lg font-semibold mb-3 text-primary flex items-center">
+                                    <i class="fa fa-star-o mr-2"></i>优势 
+                                    <div class="decor-line text-primary/50 ml-3 flex-1"></div>
                                 </h3>
                                 <ul id="personality-strengths" class="text-slate-600 list-disc list-inside space-y-2 text-sm md:text-base"></ul>
                             </div>
                             <div class="glass-block p-5">
-                                <h3 class="text-lg font-semibold mb-3 text-orange-600 flex items-center">
-                                    ⚠️ 不足 
-                                    <div class="decor-line text-orange-600 ml-3 flex-1"></div>
+                                <h3 class="text-lg font-semibold mb-3 text-primary flex items-center">
+                                    <i class="fa fa-exclamation-circle mr-2"></i>不足 
+                                    <div class="decor-line text-primary/50 ml-3 flex-1"></div>
                                 </h3>
                                 <ul id="personality-weaknesses" class="text-slate-600 list-disc list-inside space-y-2 text-sm md:text-base"></ul>
                             </div>
@@ -254,9 +272,9 @@
                         
                         <!-- 深度分析 -->
                         <div class="glass-block p-6">
-                            <h3 class="text-lg font-semibold mb-3 text-purple-600 flex items-center">
-                                📊 深度分析 
-                                <div class="decor-line text-purple-600 ml-3 flex-1"></div>
+                            <h3 class="text-lg font-semibold mb-3 text-primary flex items-center">
+                                <i class="fa fa-bar-chart mr-2"></i>深度分析 
+                                <div class="decor-line text-primary/50 ml-3 flex-1"></div>
                             </h3>
                             <div id="personality-deep-analysis" class="text-slate-600 leading-relaxed text-sm md:text-base space-y-3"></div>
                         </div>
@@ -264,16 +282,16 @@
                         <!-- 适合领域 + 改进建议 -->
                         <div class="grid grid-cols-1 gap-4">
                             <div class="glass-block p-5">
-                                <h3 class="text-lg font-semibold mb-3 text-teal-600 flex items-center">
-                                    🎯 适合领域 
-                                    <div class="decor-line text-teal-600 ml-3 flex-1"></div>
+                                <h3 class="text-lg font-semibold mb-3 text-primary flex items-center">
+                                    <i class="fa fa-briefcase mr-2"></i>适合领域 
+                                    <div class="decor-line text-primary/50 ml-3 flex-1"></div>
                                 </h3>
                                 <div id="personality-suitable-fields" class="text-slate-600 leading-relaxed text-sm md:text-base"></div>
                             </div>
                             <div class="glass-block p-5">
-                                <h3 class="text-lg font-semibold mb-3 text-blue-600 flex items-center">
-                                    💡 改进建议 
-                                    <div class="decor-line text-blue-600 ml-3 flex-1"></div>
+                                <h3 class="text-lg font-semibold mb-3 text-primary flex items-center">
+                                    <i class="fa fa-lightbulb-o mr-2"></i>改进建议 
+                                    <div class="decor-line text-primary/50 ml-3 flex-1"></div>
                                 </h3>
                                 <p id="personality-suggestions" class="text-slate-600 leading-relaxed text-sm md:text-base"></p>
                             </div>
@@ -315,12 +333,12 @@
 
     <script>
         // 全局变量
-        let currentQuestionIndex = 0; // 当前题目索引
-        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 }; // 各维度得分
-        let userAnswers = new Array(36).fill(null); // 存储用户答案
-        let currentPersonalityType = ''; // 当前测试出的人格类型
+        let currentQuestionIndex = 0;
+        let scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+        let userAnswers = new Array(36).fill(null);
+        let currentPersonalityType = '';
         
-        // 题库数据 (36道新颖有趣的题目)
+        // 题库数据
         const questions = [
             { id: 1, text: "周末计划被打乱时，你的第一反应是？", options: [
                 { text: "烦躁，想尽快恢复原计划", score: { J: 2, P: 0 } },
@@ -468,7 +486,7 @@
             ]}
         ];
 
-        // 16人格类型数据 (完整修复截断问题)
+        // 16人格类型数据（添加背景大图字段）
         const personalityTypes = {
             ISTJ: {
                 name: "物流师型 - 实际的组织者",
@@ -484,7 +502,8 @@
                     "在人际关系中，你虽然不擅长表达情感，但会用实际行动来关心和支持身边的人。"
                 ],
                 suitableFields: "适合领域：会计、审计、工程、法律、行政管理、物流管理、质量控制、军警等需要严谨和责任心的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#istj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#3B82F6"/><circle cx="115" cy="70" r="8" fill="#3B82F6"/><path d="M80 100 Q 100 120 120 100" stroke="#3B82F6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="istj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#2563EB"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#istj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#3B82F6"/><circle cx="115" cy="70" r="8" fill="#3B82F6"/><path d="M80 100 Q 100 120 120 100" stroke="#3B82F6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="istj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#2563EB"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ISFJ: {
                 name: "守卫者型 - 专注的保护者",
@@ -496,11 +515,12 @@
                 deepAnalysis: [
                     "你拥有极强的共情能力，能敏锐感知他人的情绪和需求，总是愿意伸出援手帮助有需要的人。",
                     "你重视人际关系的和谐，会尽力避免冲突，愿意为了维持和平而做出让步和妥协。",
-                    "你对身边的人充满责任感，尤其关心家人和朋友的福祉，是亲友圈中的"守护者"和"照顾者"。",
+                    "你对身边的人充满责任感，尤其关心家人和朋友的福祉，是亲友圈中的守护者和照顾者。",
                     "你注重细节和实用性，善于把日常事务打理得井井有条，让生活和工作环境温馨而有序。"
                 ],
                 suitableFields: "适合领域：护理、教育、社会工作、人力资源、客服、行政助理、医疗保健、餐饮服务等需要关怀和耐心的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#isfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#10B981"/><circle cx="115" cy="70" r="8" fill="#10B981"/><path d="M80 100 Q 100 110 120 100" stroke="#10B981" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="isfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#isfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#10B981"/><circle cx="115" cy="70" r="8" fill="#10B981"/><path d="M80 100 Q 100 110 120 100" stroke="#10B981" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="isfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             INFJ: {
                 name: "提倡者型 - 安静的理想主义者",
@@ -510,13 +530,14 @@
                 weaknesses: ["过度思考", "容易疲惫", "完美主义", "难以放下"],
                 suggestions: "学会活在当下，避免过度思虑；接受不完美，给自己和他人更多包容。",
                 deepAnalysis: [
-                    "你拥有罕见的洞察力，能看透事物的本质和他人的真实动机，常常被称为"灵魂的知己"。",
+                    "你拥有罕见的洞察力，能看透事物的本质和他人的真实动机，常常被称为灵魂的知己。",
                     "你是坚定的理想主义者，有自己的人生信仰和价值观，愿意为了追求意义和价值而付出努力。",
                     "你的直觉能力极强，往往能在信息不完整的情况下做出正确的判断和决策。",
                     "你渴望深度的、有意义的人际关系，虽然社交圈不大，但每一段关系都非常真挚和深刻。"
                 ],
                 suitableFields: "适合领域：心理咨询、教育、写作、哲学、艺术、公益事业、人力资源、管理咨询等需要洞察力和共情能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#infj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#8B5CF6"/><circle cx="115" cy="70" r="8" fill="#8B5CF6"/><path d="M80 100 Q 100 115 120 100" stroke="#8B5CF6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="infj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#7C3AED"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#infj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#8B5CF6"/><circle cx="115" cy="70" r="8" fill="#8B5CF6"/><path d="M80 100 Q 100 115 120 100" stroke="#8B5CF6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="infj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#7C3AED"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             INTJ: {
                 name: "建筑师型 - 富有想象力的战略家",
@@ -532,7 +553,8 @@
                     "你独立自主，不依赖他人的认可，有自己的判断标准，敢于坚持自己的想法即使面对反对。"
                 ],
                 suitableFields: "适合领域：科学研究、技术研发、企业管理、金融分析、战略规划、法律、工程设计、创业等需要战略思维的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#intj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#EF4444"/><circle cx="115" cy="70" r="8" fill="#EF4444"/><path d="M80 100 Q 100 105 120 100" stroke="#EF4444" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="intj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#DC2626"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#intj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#EF4444"/><circle cx="115" cy="70" r="8" fill="#EF4444"/><path d="M80 100 Q 100 105 120 100" stroke="#EF4444" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="intj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#DC2626"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ISTP: {
                 name: "鉴赏家型 - 大胆的实验家",
@@ -548,7 +570,8 @@
                     "你好奇心强，喜欢探索新事物和新方法，对机械、技术和户外活动有天然的兴趣。"
                 ],
                 suitableFields: "适合领域：机械工程、电子技术、计算机维修、运动教练、军警、消防员、手工艺、贸易、创业等需要动手能力和应变能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#istp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#F59E0B"/><circle cx="115" cy="70" r="8" fill="#F59E0B"/><path d="M80 100 Q 100 100 120 100" stroke="#F59E0B" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="istp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#istp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#F59E0B"/><circle cx="115" cy="70" r="8" fill="#F59E0B"/><path d="M80 100 Q 100 100 120 100" stroke="#F59E0B" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="istp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ISFP: {
                 name: "探险家型 - 灵活的艺术家",
@@ -564,7 +587,8 @@
                     "你虽然不善于用语言表达情感，但会通过行动、礼物或创造来表达对他人的关心和爱意。"
                 ],
                 suitableFields: "适合领域：艺术设计、音乐、摄影、烹饪、美容、时尚、体育、康复治疗、园艺等需要创造力和审美能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#isfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#EC4899"/><circle cx="115" cy="70" r="8" fill="#EC4899"/><path d="M80 100 Q 100 110 120 100" stroke="#EC4899" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="isfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EC4899"/><stop offset="100%" stop-color="#DB2777"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#isfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#EC4899"/><circle cx="115" cy="70" r="8" fill="#EC4899"/><path d="M80 100 Q 100 110 120 100" stroke="#EC4899" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="isfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EC4899"/><stop offset="100%" stop-color="#DB2777"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             INFP: {
                 name: "调停者型 - 充满诗意的理想主义者",
@@ -581,6 +605,7 @@
                 ],
                 suitableFields: "适合领域：写作、编辑、艺术、音乐、心理咨询、教育、公益、翻译、哲学等需要创造力和共情能力的领域。",
                 avatar: `<img src="https://gd-hbimg-edge.huaban.com/bab3a240b139796daca11c5ab1fcc828dec6869f46158d-aCg6j3_fw1200webp?auth_key=1770062400-1ff22499b5594d69b4c2050e6d0ebc8f-0-cc63a5f7f286fb116663cbbded0e7053" alt="调停者型人格" class="w-full h-full object-cover rounded-3xl"/>`,
+                bgImage: "https://gd-hbimg-edge.huaban.com/bab3a240b139796daca11c5ab1fcc828dec6869f46158d-aCg6j3_fw1200webp?auth_key=1770062400-1ff22499b5594d69b4c2050e6d0ebc8f-0-cc63a5f7f286fb116663cbbded0e7053"
             },
             INTP: {
                 name: "逻辑学家型 - 创新的发明家",
@@ -596,7 +621,8 @@
                     "你追求知识和真理本身，而非功利性的结果，是天生的思想家和发明家。"
                 ],
                 suitableFields: "适合领域：科研、编程、哲学、数学、学术研究、数据分析、设计、创意策划等需要逻辑思维和创新能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#intp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#14B8A6"/><circle cx="115" cy="70" r="8" fill="#14B8A6"/><path d="M80 100 Q 100 105 120 100" stroke="#14B8A6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="intp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#14B8A6"/><stop offset="100%" stop-color="#0F766E"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#intp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#14B8A6"/><circle cx="115" cy="70" r="8" fill="#14B8A6"/><path d="M80 100 Q 100 105 120 100" stroke="#14B8A6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="intp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#14B8A6"/><stop offset="100%" stop-color="#0F766E"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ESTP: {
                 name: "企业家型 - 精力充沛的感知者",
@@ -612,7 +638,8 @@
                     "你享受生活中的刺激和乐趣，善于用幽默和热情感染身边的人。"
                 ],
                 suitableFields: "适合领域：销售、创业、公关、演艺、体育、金融交易、市场营销、客服管理等需要应变能力和行动力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#estp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#F97316"/><circle cx="115" cy="70" r="8" fill="#F97316"/><path d="M80 100 Q 100 100 120 100" stroke="#F97316" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="estp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F97316"/><stop offset="100%" stop-color="#EA580C"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#estp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#F97316"/><circle cx="115" cy="70" r="8" fill="#F97316"/><path d="M80 100 Q 100 100 120 100" stroke="#F97316" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="estp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F97316"/><stop offset="100%" stop-color="#EA580C"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ESFP: {
                 name: "表演者型 - 热情的艺人",
@@ -628,7 +655,8 @@
                     "你注重实际的体验和感受，不喜欢抽象的理论，更愿意通过亲身经历来学习和成长。"
                 ],
                 suitableFields: "适合领域：演艺、主持、销售、公关、旅游、餐饮、时尚、美容、教育培训等需要表现力和社交能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#esfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#BE185D"/><circle cx="115" cy="70" r="8" fill="#BE185D"/><path d="M80 100 Q 100 115 120 100" stroke="#BE185D" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="esfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#BE185D"/><stop offset="100%" stop-color="#9D174D"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#esfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#BE185D"/><circle cx="115" cy="70" r="8" fill="#BE185D"/><path d="M80 100 Q 100 115 120 100" stroke="#BE185D" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="esfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#BE185D"/><stop offset="100%" stop-color="#9D174D"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ENFP: {
                 name: "竞选者型 - 热情的理想主义者",
@@ -644,7 +672,8 @@
                     "你追求意义和价值，愿意为了自己的理想和信念付出努力，激励身边的人一起成长。"
                 ],
                 suitableFields: "适合领域：创意策划、营销、教育、心理咨询、演艺、写作、创业、公益等需要创造力和感染力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#enfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#A855F7"/><circle cx="115" cy="70" r="8" fill="#A855F7"/><path d="M80 100 Q 100 115 120 100" stroke="#A855F7" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="enfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A855F7"/><stop offset="100%" stop-color="#9333EA"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#enfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#A855F7"/><circle cx="115" cy="70" r="8" fill="#A855F7"/><path d="M80 100 Q 100 115 120 100" stroke="#A855F7" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="enfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A855F7"/><stop offset="100%" stop-color="#9333EA"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ENTP: {
                 name: "辩论家型 - 聪明的发明家",
@@ -656,11 +685,12 @@
                 deepAnalysis: [
                     "你拥有敏捷的思维和出色的口才，善于辩论和说服他人，是天生的沟通者和思考者。",
                     "你喜欢挑战权威和传统，总是质疑现有的规则和模式，寻找更好的解决方案。",
-                    "你的好奇心极强，对各种知识和领域都感兴趣，是典型的"全能型"人才。",
+                    "你的好奇心极强，对各种知识和领域都感兴趣，是典型的全能型人才。",
                     "你善于发现问题并提出创新的解决方案，能在复杂的情况中快速找到突破口。"
                 ],
                 suitableFields: "适合领域：律师、咨询、创业、营销、媒体、科研、设计、公关等需要思维敏捷和创新能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#entp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#2563EB"/><circle cx="115" cy="70" r="8" fill="#2563EB"/><path d="M80 100 Q 100 105 120 100" stroke="#2563EB" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="entp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#1D4ED8"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#entp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#2563EB"/><circle cx="115" cy="70" r="8" fill="#2563EB"/><path d="M80 100 Q 100 105 120 100" stroke="#2563EB" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="entp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#1D4ED8"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ESTJ: {
                 name: "总经理型 - 高效的管理者",
@@ -676,7 +706,8 @@
                     "你善于将复杂的任务分解为可执行的步骤，确保目标的顺利实现。"
                 ],
                 suitableFields: "适合领域：企业管理、行政管理、军警、销售管理、项目管理、金融、法律等需要领导能力和执行力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#estj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#D946EF"/><circle cx="115" cy="70" r="8" fill="#D946EF"/><path d="M80 100 Q 100 100 120 100" stroke="#D946EF" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="estj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D946EF"/><stop offset="100%" stop-color="#C026D3"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#estj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#D946EF"/><circle cx="115" cy="70" r="8" fill="#D946EF"/><path d="M80 100 Q 100 100 120 100" stroke="#D946EF" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="estj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D946EF"/><stop offset="100%" stop-color="#C026D3"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ESFJ: {
                 name: "执政官型 - 热心的提供者",
@@ -686,13 +717,14 @@
                 weaknesses: ["过度付出", "害怕批评", "缺乏主见", "过于在意他人看法"],
                 suggestions: "学会关注自我需求，建立自我认同；勇敢表达自己的想法，不必过分在意他人评价。",
                 deepAnalysis: [
-                    "你天生热情好客，善于建立和维护人际关系，是社交场合中的"粘合剂"。",
+                    "你天生热情好客，善于建立和维护人际关系，是社交场合中的粘合剂。",
                     "你重视他人的感受和需求，愿意付出时间和精力来帮助和照顾身边的人。",
                     "你善于协调不同人的利益和需求，能有效维护团队的和谐与稳定。",
                     "你对自己的社会责任有清晰的认知，愿意为集体利益付出努力。"
                 ],
                 suitableFields: "适合领域：人力资源、公关、教育、医疗、酒店管理、销售、行政管理、客服管理等需要社交能力和协调能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#esfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#0EA5E9"/><circle cx="115" cy="70" r="8" fill="#0EA5E9"/><path d="M80 100 Q 100 110 120 100" stroke="#0EA5E9" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="esfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#0284C7"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#esfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#0EA5E9"/><circle cx="115" cy="70" r="8" fill="#0EA5E9"/><path d="M80 100 Q 100 110 120 100" stroke="#0EA5E9" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="esfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#0284C7"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             },
             ENFJ: {
                 name: "教育家型 - 富有魅力的领导者",
@@ -708,27 +740,38 @@
                     "你善于沟通和说服，能将自己的愿景转化为团队的共同目标。"
                 ],
                 suitableFields: "适合领域：教育、心理咨询、企业管理、公关、培训、公益、政治、文化传播等需要领导力和共情能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#enfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#16A34A"/><circle cx="115" cy="70" r="8" fill="#16A34A"/><path d="M80 100 Q 100 115 120 100" stroke="#16A34A" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="enfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#16A34A"/><stop offset="100%" stop-color="#15803D"/></linearGradient></defs></svg>`
+                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#enfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#16A34A"/><circle cx="115" cy="70" r="8" fill="#16A34A"/><path d="M80 100 Q 100 115 120 100" stroke="#16A34A" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="enfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#16A34A"/><stop offset="100%" stop-color="#15803D"/></linearGradient></defs></svg>`,
+                bgImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
             }
         };
 
-        // DOM加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        // 在页面完全加载后初始化
+        window.addEventListener('load', function() {
+            console.log('页面加载完成，正在初始化...');
+            
             // 绑定开始测试按钮事件
-            document.getElementById('start-btn').addEventListener('click', function() {
-                // 重置所有数据
-                currentQuestionIndex = 0;
-                scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
-                userAnswers = new Array(36).fill(null);
-                
-                // 切换页面显示
-                document.getElementById('home-container').classList.add('hidden');
-                document.getElementById('test-container').classList.remove('hidden');
-                document.getElementById('result-container').classList.add('hidden');
-                
-                // 加载第一题
-                loadQuestion(currentQuestionIndex);
-            });
+            const startBtn = document.getElementById('start-btn');
+            if (startBtn) {
+                console.log('找到开始测试按钮');
+                startBtn.addEventListener('click', function() {
+                    console.log('开始测试按钮被点击');
+                    
+                    // 重置所有数据
+                    currentQuestionIndex = 0;
+                    scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+                    userAnswers = new Array(36).fill(null);
+                    
+                    // 切换页面显示
+                    document.getElementById('home-container').classList.add('hidden');
+                    document.getElementById('test-container').classList.remove('hidden');
+                    document.getElementById('result-container').classList.add('hidden');
+                    
+                    // 加载第一题
+                    loadQuestion(currentQuestionIndex);
+                });
+            } else {
+                console.error('未找到开始测试按钮');
+            }
 
             // 测试区域DOM元素
             const optionsContainer = document.getElementById('options-container');
@@ -782,6 +825,19 @@
                             for (const key in option.score) {
                                 scores[key] += option.score[key];
                             }
+                            
+                            // 自动跳转逻辑（修改为300毫秒）
+                            setTimeout(() => {
+                                // 如果是最后一题，自动显示结果
+                                if (index === questions.length - 1) {
+                                    calculatePersonality();
+                                } 
+                                // 否则自动跳转到下一题
+                                else if (index < questions.length - 1) {
+                                    currentQuestionIndex++;
+                                    loadQuestion(currentQuestionIndex);
+                                }
+                            }, 300); // 改为300毫秒延迟，更流畅
                         }
                         
                         // 重新加载题目以更新选择状态
@@ -823,23 +879,27 @@
             }
 
             // 绑定上一题按钮事件
-            prevBtn.addEventListener('click', function() {
-                if (currentQuestionIndex > 0) {
-                    currentQuestionIndex--;
-                    loadQuestion(currentQuestionIndex);
-                }
-            });
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    if (currentQuestionIndex > 0) {
+                        currentQuestionIndex--;
+                        loadQuestion(currentQuestionIndex);
+                    }
+                });
+            }
 
             // 绑定下一题按钮事件
-            nextBtn.addEventListener('click', function() {
-                if (currentQuestionIndex < questions.length - 1) {
-                    currentQuestionIndex++;
-                    loadQuestion(currentQuestionIndex);
-                } else if (currentQuestionIndex === questions.length - 1) {
-                    // 最后一道题，计算并显示结果
-                    calculatePersonality();
-                }
-            });
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    if (currentQuestionIndex < questions.length - 1) {
+                        currentQuestionIndex++;
+                        loadQuestion(currentQuestionIndex);
+                    } else if (currentQuestionIndex === questions.length - 1) {
+                        // 最后一道题，计算并显示结果
+                        calculatePersonality();
+                    }
+                });
+            }
 
             // 计算人格类型函数
             function calculatePersonality() {
@@ -859,50 +919,73 @@
             function showResult(personalityType) {
                 const personality = personalityTypes[personalityType];
                 
+                if (!personality) {
+                    console.error('未找到人格类型:', personalityType);
+                    return;
+                }
+                
                 // 设置颜色
-                document.getElementById('color-indicator').style.backgroundColor = personality.color;
+                const colorIndicator = document.getElementById('color-indicator');
+                if (colorIndicator) colorIndicator.style.backgroundColor = personality.color;
                 
                 // 设置标题
-                document.getElementById('personality-title').textContent = personality.name;
+                const titleElement = document.getElementById('personality-title');
+                if (titleElement) titleElement.textContent = personality.name;
                 
                 // 设置角色画像
-                document.getElementById('personality-portrait').textContent = personality.portrait;
+                const portraitElement = document.getElementById('personality-portrait');
+                if (portraitElement) portraitElement.textContent = personality.portrait;
                 
                 // 设置优势
                 const strengthsList = document.getElementById('personality-strengths');
-                strengthsList.innerHTML = '';
-                personality.strengths.forEach(strength => {
-                    const li = document.createElement('li');
-                    li.textContent = strength;
-                    strengthsList.appendChild(li);
-                });
+                if (strengthsList) {
+                    strengthsList.innerHTML = '';
+                    personality.strengths.forEach(strength => {
+                        const li = document.createElement('li');
+                        li.textContent = strength;
+                        strengthsList.appendChild(li);
+                    });
+                }
                 
                 // 设置不足
                 const weaknessesList = document.getElementById('personality-weaknesses');
-                weaknessesList.innerHTML = '';
-                personality.weaknesses.forEach(weakness => {
-                    const li = document.createElement('li');
-                    li.textContent = weakness;
-                    weaknessesList.appendChild(li);
-                });
+                if (weaknessesList) {
+                    weaknessesList.innerHTML = '';
+                    personality.weaknesses.forEach(weakness => {
+                        const li = document.createElement('li');
+                        li.textContent = weakness;
+                        weaknessesList.appendChild(li);
+                    });
+                }
                 
                 // 设置深度分析
                 const deepAnalysis = document.getElementById('personality-deep-analysis');
-                deepAnalysis.innerHTML = '';
-                personality.deepAnalysis.forEach(paragraph => {
-                    const p = document.createElement('p');
-                    p.textContent = paragraph;
-                    deepAnalysis.appendChild(p);
-                });
+                if (deepAnalysis) {
+                    deepAnalysis.innerHTML = '';
+                    personality.deepAnalysis.forEach(paragraph => {
+                        const p = document.createElement('p');
+                        p.textContent = paragraph;
+                        deepAnalysis.appendChild(p);
+                    });
+                }
                 
                 // 设置适合领域
-                document.getElementById('personality-suitable-fields').textContent = personality.suitableFields;
+                const suitableFieldsElement = document.getElementById('personality-suitable-fields');
+                if (suitableFieldsElement) suitableFieldsElement.textContent = personality.suitableFields;
                 
                 // 设置改进建议
-                document.getElementById('personality-suggestions').textContent = personality.suggestions;
+                const suggestionsElement = document.getElementById('personality-suggestions');
+                if (suggestionsElement) suggestionsElement.textContent = personality.suggestions;
                 
                 // 设置头像
-                document.getElementById('personality-avatar').innerHTML = personality.avatar;
+                const avatarContainer = document.getElementById('personality-avatar');
+                if (avatarContainer) avatarContainer.innerHTML = personality.avatar;
+                
+                // 设置背景大图
+                const bgImageContainer = document.getElementById('bg-image-container');
+                if (bgImageContainer && personality.bgImage) {
+                    bgImageContainer.innerHTML = `<img src="${personality.bgImage}" alt="${personality.name} 背景图" />`;
+                }
                 
                 // 切换页面显示
                 document.getElementById('test-container').classList.add('hidden');
@@ -910,75 +993,95 @@
             }
 
             // 绑定分享按钮事件
-            document.getElementById('share-btn').addEventListener('click', function() {
-                // 生成当前页面的URL（实际项目中应该是动态生成的分享链接）
-                const shareUrl = window.location.href + '?type=' + currentPersonalityType;
-                
-                // 清空二维码容器
-                document.getElementById('qrcode-container').innerHTML = '';
-                
-                // 生成二维码
-                QRCode.toCanvas(document.getElementById('qrcode-container'), shareUrl, {
-                    width: 256,
-                    height: 256,
-                    color: {
-                        dark: '#6366F1',
-                        light: '#FFFFFF'
-                    }
-                }, function(error) {
-                    if (error) console.error(error);
-                });
-                
-                // 显示二维码弹窗
-                document.getElementById('qrcode-modal').classList.remove('hidden');
-            });
-
-            // 绑定保存按钮事件
-            document.getElementById('save-btn').addEventListener('click', function() {
-                const resultCard = document.getElementById('result-card-main');
-                
-                html2canvas(resultCard, {
-                    backgroundColor: null,
-                    scale: 2, // 提高分辨率
-                    useCORS: true // 允许跨域图片
-                }).then(canvas => {
-                    // 将canvas转换为图片URL
-                    const imgData = canvas.toDataURL('image/png');
+            const shareBtn = document.getElementById('share-btn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', function() {
+                    // 生成当前页面的URL
+                    const shareUrl = window.location.href + '?type=' + currentPersonalityType;
                     
-                    // 创建下载链接
-                    const link = document.createElement('a');
-                    link.download = `16人格测试结果-${currentPersonalityType}.png`;
-                    link.href = imgData;
-                    link.click();
+                    // 清空二维码容器
+                    const qrcodeContainer = document.getElementById('qrcode-container');
+                    if (qrcodeContainer) qrcodeContainer.innerHTML = '';
+                    
+                    // 生成二维码
+                    QRCode.toCanvas(document.getElementById('qrcode-container'), shareUrl, {
+                        width: 256,
+                        height: 256,
+                        color: {
+                            dark: '#6366F1',
+                            light: '#FFFFFF'
+                        }
+                    }, function(error) {
+                        if (error) console.error(error);
+                    });
+                    
+                    // 显示二维码弹窗
+                    const modal = document.getElementById('qrcode-modal');
+                    if (modal) modal.classList.remove('hidden');
                 });
-            });
+            }
+
+            // 绑定保存按钮事件 - 修改为保存PNG格式
+            const saveBtn = document.getElementById('save-btn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', function() {
+                    const resultCard = document.getElementById('result-card-main');
+                    
+                    html2canvas(resultCard, {
+                        backgroundColor: null,
+                        scale: 2,
+                        useCORS: true
+                    }).then(canvas => {
+                        // 将canvas转换为PNG图片URL（修改为PNG格式）
+                        const imgData = canvas.toDataURL('image/png');
+                        
+                        // 创建下载链接
+                        const link = document.createElement('a');
+                        link.download = `16人格测试结果-${currentPersonalityType}.png`; // 改为PNG扩展名
+                        link.href = imgData;
+                        link.click();
+                    });
+                });
+            }
 
             // 绑定重新测试按钮事件
-            document.getElementById('restart-btn').addEventListener('click', function() {
-                // 重置所有数据
-                currentQuestionIndex = 0;
-                scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
-                userAnswers = new Array(36).fill(null);
-                
-                // 切换页面
-                document.getElementById('result-container').classList.add('hidden');
-                document.getElementById('test-container').classList.remove('hidden');
-                
-                // 加载第一题
-                loadQuestion(currentQuestionIndex);
-            });
+            const restartBtn = document.getElementById('restart-btn');
+            if (restartBtn) {
+                restartBtn.addEventListener('click', function() {
+                    // 重置所有数据
+                    currentQuestionIndex = 0;
+                    scores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+                    userAnswers = new Array(36).fill(null);
+                    
+                    // 切换页面
+                    document.getElementById('result-container').classList.add('hidden');
+                    document.getElementById('test-container').classList.remove('hidden');
+                    
+                    // 加载第一题
+                    loadQuestion(currentQuestionIndex);
+                });
+            }
 
             // 绑定关闭二维码弹窗事件
-            document.getElementById('close-modal').addEventListener('click', function() {
-                document.getElementById('qrcode-modal').classList.add('hidden');
-            });
+            const closeModalBtn = document.getElementById('close-modal');
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', function() {
+                    const modal = document.getElementById('qrcode-modal');
+                    if (modal) modal.classList.add('hidden');
+                });
+            }
 
             // 点击模态框外部关闭
-            document.getElementById('qrcode-modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.add('hidden');
-                }
-            });
+            const modal = document.getElementById('qrcode-modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.add('hidden');
+                    }
+                });
+            }
+            
+            console.log('初始化完成');
         });
     </script>
 </body>
