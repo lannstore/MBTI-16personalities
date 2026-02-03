@@ -109,11 +109,19 @@
                     height: 280px;
                     min-height: 250px;
                 }
+                .mobile-scale {
+                    transform: scale(0.95);
+                    transform-origin: top center;
+                }
             }
             @media (max-width: 480px) {
                 .avatar-container {
                     height: 240px;
                     min-height: 220px;
+                }
+                .mobile-scale {
+                    transform: scale(0.9);
+                    transform-origin: top center;
                 }
             }
             .decor-line {
@@ -130,6 +138,14 @@
             /* 添加hidden类定义 */
             .hidden {
                 display: none;
+            }
+            /* 图片预加载样式 */
+            .preload-image {
+                position: absolute;
+                width: 0;
+                height: 0;
+                opacity: 0;
+                pointer-events: none;
             }
         }  
     </style>
@@ -331,6 +347,9 @@
         </div>
     </div>
 
+    <!-- 图片预加载容器 -->
+    <div id="image-preloader" class="preload-image"></div>
+
     <script>
         // 全局变量
         let currentQuestionIndex = 0;
@@ -488,13 +507,13 @@
 
         // 辅助函数：创建头像图片HTML
         function createAvatarImg(src, alt) {
-            return `<img src="${src}" alt="${alt}" class="w-full h-full object-cover rounded-3xl" crossOrigin="anonymous"/>`;
+            return `<img src="${src}" alt="${alt}" class="w-full h-full object-cover rounded-3xl" crossorigin="anonymous"/>`;
         }
 
-        // 定义共享的图片URL
-        const SHARED_IMAGE_URL = 'https://gd-hbimg-edge.huaban.com/bab3a240b139796daca11c5ab1fcc828dec6869f46158d-aCg6j3_fw1200webp?auth_key=1770134400-1c970962c0a04779b7eefe984fd7a409-0-70fef70dc741174c5b4c11969d399e1e';
+        // 使用GitHub raw链接（已修正）
+        const SHARED_IMAGE_URL = 'https://raw.githubusercontent.com/m121705975-eng/MBTI-16personalities/c70845ec1d6fdce1373a5556d4706f7718b51964/%E7%94%9F%E6%88%90%2016%20%E4%BA%BA%E6%A0%BC%E6%89%8B%E5%8A%9E%E7%94%BB%E5%83%8F.png';
 
-        // 16人格类型数据（将所有头像和背景图替换为同一张图片）
+        // 16人格类型数据（将所有头像和背景图替换为GitHub图片）
         const personalityTypes = {
             ISTJ: {
                 name: "物流师型 - 实际的组织者",
@@ -753,6 +772,24 @@
             }
         };
 
+        // 图片预加载函数 - 修复INFP手机端保存问题
+        function preloadImage(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    console.log('图片预加载成功:', url);
+                    resolve(img);
+                };
+                img.onerror = (err) => {
+                    console.warn('图片预加载失败:', url, err);
+                    // 即使预加载失败，也继续执行
+                    resolve(null);
+                };
+                img.src = url;
+            });
+        }
+
         // 在页面完全加载后初始化
         window.addEventListener('load', function() {
             console.log('页面加载完成，正在初始化...');
@@ -923,13 +960,22 @@
                 showResult(type);
             }
 
-            // 显示结果函数
-            function showResult(personalityType) {
+            // 显示结果函数 - 增强图片预加载
+            async function showResult(personalityType) {
                 const personality = personalityTypes[personalityType];
                 
                 if (!personality) {
                     console.error('未找到人格类型:', personalityType);
                     return;
+                }
+                
+                // 预加载图片（特别是针对INFP的手机端问题）
+                console.log('开始预加载图片:', personality.bgImage);
+                try {
+                    await preloadImage(personality.bgImage);
+                    console.log('图片预加载完成，开始显示结果');
+                } catch (error) {
+                    console.warn('图片预加载异常，继续显示结果:', error);
                 }
                 
                 // 设置颜色
@@ -992,12 +1038,17 @@
                 // 设置背景大图
                 const bgImageContainer = document.getElementById('bg-image-container');
                 if (bgImageContainer && personality.bgImage) {
-                    bgImageContainer.innerHTML = `<img src="${personality.bgImage}" alt="${personality.name} 背景图" crossOrigin="anonymous"/>`;
+                    bgImageContainer.innerHTML = `<img src="${personality.bgImage}" alt="${personality.name} 背景图" crossorigin="anonymous"/>`;
                 }
                 
                 // 切换页面显示
                 document.getElementById('test-container').classList.add('hidden');
                 document.getElementById('result-container').classList.remove('hidden');
+                
+                // 为移动端添加缩放类（提升保存成功率）
+                if (window.innerWidth <= 768) {
+                    document.getElementById('result-card-main').classList.add('mobile-scale');
+                }
             }
 
             // 绑定分享按钮事件
@@ -1029,56 +1080,100 @@
                 });
             }
 
-            // 绑定保存按钮事件 - 修正保存图片异常问题
+            // 绑定保存按钮事件 - 修复INFP手机端保存问题
             const saveBtn = document.getElementById('save-btn');
             if (saveBtn) {
-                saveBtn.addEventListener('click', function() {
+                saveBtn.addEventListener('click', async function() {
                     const resultCard = document.getElementById('result-card-main');
                     
                     // 显示加载提示
+                    const originalHtml = saveBtn.innerHTML;
                     saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>保存中...';
                     saveBtn.disabled = true;
                     
-                    // 添加一些延迟，确保所有图片加载完成
-                    setTimeout(() => {
-                        html2canvas(resultCard, {
+                    // 添加额外的图片预加载确认（针对手机端）
+                    const allImages = resultCard.querySelectorAll('img');
+                    const imagePromises = [];
+                    
+                    allImages.forEach(img => {
+                        if (!img.complete) {
+                            const promise = new Promise((resolve) => {
+                                img.onload = resolve;
+                                img.onerror = resolve; // 即使出错也继续
+                            });
+                            imagePromises.push(promise);
+                        }
+                    });
+                    
+                    // 等待所有图片加载完成（最多等待3秒）
+                    if (imagePromises.length > 0) {
+                        await Promise.race([
+                            Promise.all(imagePromises),
+                            new Promise(resolve => setTimeout(resolve, 3000))
+                        ]);
+                    }
+                    
+                    // 移动端调整缩放比例以提升性能
+                    const isMobile = window.innerWidth <= 768;
+                    const scaleValue = isMobile ? 1.5 : 2;
+                    
+                    try {
+                        const canvas = await html2canvas(resultCard, {
                             backgroundColor: '#ffffff',
-                            scale: 2,
-                            useCORS: true, // 允许跨域图片
-                            allowTaint: true, // 允许污染画布
-                            logging: false, // 关闭日志
-                            imageTimeout: 15000, // 设置图片加载超时时间为15秒
+                            scale: scaleValue, // 移动端降低分辨率提升性能
+                            useCORS: true,
+                            allowTaint: true,
+                            logging: false,
+                            imageTimeout: 10000, // 10秒超时
+                            removeContainer: true, // 清理临时容器
                             onclone: function(clonedDoc) {
-                                // 克隆文档时，确保所有图片都有crossOrigin属性
+                                // 确保所有图片都有crossorigin属性
                                 const images = clonedDoc.querySelectorAll('img');
                                 images.forEach(img => {
-                                    if (!img.hasAttribute('crossOrigin')) {
-                                        img.setAttribute('crossOrigin', 'anonymous');
+                                    if (!img.hasAttribute('crossorigin')) {
+                                        img.setAttribute('crossorigin', 'anonymous');
                                     }
+                                    // 强制设置图片显示（针对可能隐藏的图片）
+                                    img.style.display = 'block';
+                                    img.style.visibility = 'visible';
+                                    img.style.opacity = '1';
                                 });
                             }
-                        }).then(canvas => {
-                            // 将canvas转换为PNG图片URL
-                            const imgData = canvas.toDataURL('image/png', 1.0); // 最高质量
-                            
-                            // 创建下载链接
-                            const link = document.createElement('a');
-                            link.download = `16人格测试结果-${currentPersonalityType}.png`;
-                            link.href = imgData;
-                            link.click();
-                            
-                            // 恢复按钮状态
-                            saveBtn.innerHTML = '<i class="fa fa-download mr-2"></i>保存到本地';
-                            saveBtn.disabled = false;
-                        }).catch(error => {
-                            console.error('保存图片时出错:', error);
-                            alert('保存失败，请重试或截图保存');
-                            
-                            // 恢复按钮状态
-                            saveBtn.innerHTML = '<i class="fa fa-download mr-2"></i>保存到本地';
-                            saveBtn.disabled = false;
                         });
-                    }, 500); // 500毫秒延迟，确保内容渲染完成
+                        
+                        // 将canvas转换为PNG图片URL
+                        const imgData = canvas.toDataURL('image/png', 1.0);
+                        
+                        // 创建下载链接
+                        const link = document.createElement('a');
+                        link.download = `16人格测试结果-${currentPersonalityType}.png`;
+                        link.href = imgData;
+                        
+                        // 触发下载
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        // 恢复按钮状态
+                        saveBtn.innerHTML = originalHtml;
+                        saveBtn.disabled = false;
+                        
+                        console.log('图片保存成功，人格类型:', currentPersonalityType);
+                        
+                    } catch (error) {
+                        console.error('保存图片时出错:', error);
+                        
+                        // 提供用户友好的错误提示
+                        if (isMobile) {
+                            alert('保存失败，建议您尝试截图保存，或稍后重试');
+                        } else {
+                            alert('保存失败，请重试或使用截图功能保存结果');
+                        }
+                        
+                        // 恢复按钮状态
+                        saveBtn.innerHTML = originalHtml;
+                        saveBtn.disabled = false;
+                    }
                 });
             }
 
