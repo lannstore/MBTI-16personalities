@@ -486,7 +486,15 @@
             ]}
         ];
 
-        // 16人格类型数据（添加背景大图字段）
+        // 辅助函数：创建头像图片HTML
+        function createAvatarImg(src, alt) {
+            return `<img src="${src}" alt="${alt}" class="w-full h-full object-cover rounded-3xl" crossOrigin="anonymous"/>`;
+        }
+
+        // 定义共享的图片URL
+        const SHARED_IMAGE_URL = 'https://gd-hbimg-edge.huaban.com/bab3a240b139796daca11c5ab1fcc828dec6869f46158d-aCg6j3_fw1200webp?auth_key=1770134400-1c970962c0a04779b7eefe984fd7a409-0-70fef70dc741174c5b4c11969d399e1e';
+
+        // 16人格类型数据（将所有头像和背景图替换为同一张图片）
         const personalityTypes = {
             ISTJ: {
                 name: "物流师型 - 实际的组织者",
@@ -502,8 +510,8 @@
                     "在人际关系中，你虽然不擅长表达情感，但会用实际行动来关心和支持身边的人。"
                 ],
                 suitableFields: "适合领域：会计、审计、工程、法律、行政管理、物流管理、质量控制、军警等需要严谨和责任心的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#istj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#3B82F6"/><circle cx="115" cy="70" r="8" fill="#3B82F6"/><path d="M80 100 Q 100 120 120 100" stroke="#3B82F6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="istj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#2563EB"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "物流师型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ISFJ: {
                 name: "守卫者型 - 专注的保护者",
@@ -519,8 +527,8 @@
                     "你注重细节和实用性，善于把日常事务打理得井井有条，让生活和工作环境温馨而有序。"
                 ],
                 suitableFields: "适合领域：护理、教育、社会工作、人力资源、客服、行政助理、医疗保健、餐饮服务等需要关怀和耐心的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#isfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#10B981"/><circle cx="115" cy="70" r="8" fill="#10B981"/><path d="M80 100 Q 100 110 120 100" stroke="#10B981" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="isfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#059669"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "守卫者型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             INFJ: {
                 name: "提倡者型 - 安静的理想主义者",
@@ -536,8 +544,8 @@
                     "你渴望深度的、有意义的人际关系，虽然社交圈不大，但每一段关系都非常真挚和深刻。"
                 ],
                 suitableFields: "适合领域：心理咨询、教育、写作、哲学、艺术、公益事业、人力资源、管理咨询等需要洞察力和共情能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#infj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#8B5CF6"/><circle cx="115" cy="70" r="8" fill="#8B5CF6"/><path d="M80 100 Q 100 115 120 100" stroke="#8B5CF6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="infj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#7C3AED"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "提倡者型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             INTJ: {
                 name: "建筑师型 - 富有想象力的战略家",
@@ -553,8 +561,8 @@
                     "你独立自主，不依赖他人的认可，有自己的判断标准，敢于坚持自己的想法即使面对反对。"
                 ],
                 suitableFields: "适合领域：科学研究、技术研发、企业管理、金融分析、战略规划、法律、工程设计、创业等需要战略思维的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#intj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#EF4444"/><circle cx="115" cy="70" r="8" fill="#EF4444"/><path d="M80 100 Q 100 105 120 100" stroke="#EF4444" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="intj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EF4444"/><stop offset="100%" stop-color="#DC2626"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "建筑师型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ISTP: {
                 name: "鉴赏家型 - 大胆的实验家",
@@ -570,8 +578,8 @@
                     "你好奇心强，喜欢探索新事物和新方法，对机械、技术和户外活动有天然的兴趣。"
                 ],
                 suitableFields: "适合领域：机械工程、电子技术、计算机维修、运动教练、军警、消防员、手工艺、贸易、创业等需要动手能力和应变能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#istp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#F59E0B"/><circle cx="115" cy="70" r="8" fill="#F59E0B"/><path d="M80 100 Q 100 100 120 100" stroke="#F59E0B" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="istp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F59E0B"/><stop offset="100%" stop-color="#D97706"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "鉴赏家型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ISFP: {
                 name: "探险家型 - 灵活的艺术家",
@@ -587,8 +595,8 @@
                     "你虽然不善于用语言表达情感，但会通过行动、礼物或创造来表达对他人的关心和爱意。"
                 ],
                 suitableFields: "适合领域：艺术设计、音乐、摄影、烹饪、美容、时尚、体育、康复治疗、园艺等需要创造力和审美能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#isfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#EC4899"/><circle cx="115" cy="70" r="8" fill="#EC4899"/><path d="M80 100 Q 100 110 120 100" stroke="#EC4899" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="isfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#EC4899"/><stop offset="100%" stop-color="#DB2777"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "探险家型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             INFP: {
                 name: "调停者型 - 充满诗意的理想主义者",
@@ -604,8 +612,8 @@
                     "你富有创造力和诗意，善于用文字、艺术等形式表达自己的内心感受和对世界的理解。"
                 ],
                 suitableFields: "适合领域：写作、编辑、艺术、音乐、心理咨询、教育、公益、翻译、哲学等需要创造力和共情能力的领域。",
-                avatar: `<img src="https://gd-hbimg-edge.huaban.com/bab3a240b139796daca11c5ab1fcc828dec6869f46158d-aCg6j3_fw1200webp?auth_key=1770062400-1ff22499b5594d69b4c2050e6d0ebc8f-0-cc63a5f7f286fb116663cbbded0e7053" alt="调停者型人格" class="w-full h-full object-cover rounded-3xl"/>`,
-                bgImage: "https://gd-hbimg-edge.huaban.com/bab3a240b139796daca11c5ab1fcc828dec6869f46158d-aCg6j3_fw1200webp?auth_key=1770062400-1ff22499b5594d69b4c2050e6d0ebc8f-0-cc63a5f7f286fb116663cbbded0e7053"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "调停者型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             INTP: {
                 name: "逻辑学家型 - 创新的发明家",
@@ -621,8 +629,8 @@
                     "你追求知识和真理本身，而非功利性的结果，是天生的思想家和发明家。"
                 ],
                 suitableFields: "适合领域：科研、编程、哲学、数学、学术研究、数据分析、设计、创意策划等需要逻辑思维和创新能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#intp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#14B8A6"/><circle cx="115" cy="70" r="8" fill="#14B8A6"/><path d="M80 100 Q 100 105 120 100" stroke="#14B8A6" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="intp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#14B8A6"/><stop offset="100%" stop-color="#0F766E"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "逻辑学家型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ESTP: {
                 name: "企业家型 - 精力充沛的感知者",
@@ -638,8 +646,8 @@
                     "你享受生活中的刺激和乐趣，善于用幽默和热情感染身边的人。"
                 ],
                 suitableFields: "适合领域：销售、创业、公关、演艺、体育、金融交易、市场营销、客服管理等需要应变能力和行动力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#estp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#F97316"/><circle cx="115" cy="70" r="8" fill="#F97316"/><path d="M80 100 Q 100 100 120 100" stroke="#F97316" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="estp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F97316"/><stop offset="100%" stop-color="#EA580C"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "企业家型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ESFP: {
                 name: "表演者型 - 热情的艺人",
@@ -655,8 +663,8 @@
                     "你注重实际的体验和感受，不喜欢抽象的理论，更愿意通过亲身经历来学习和成长。"
                 ],
                 suitableFields: "适合领域：演艺、主持、销售、公关、旅游、餐饮、时尚、美容、教育培训等需要表现力和社交能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#esfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#BE185D"/><circle cx="115" cy="70" r="8" fill="#BE185D"/><path d="M80 100 Q 100 115 120 100" stroke="#BE185D" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="esfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#BE185D"/><stop offset="100%" stop-color="#9D174D"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "表演者型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ENFP: {
                 name: "竞选者型 - 热情的理想主义者",
@@ -672,8 +680,8 @@
                     "你追求意义和价值，愿意为了自己的理想和信念付出努力，激励身边的人一起成长。"
                 ],
                 suitableFields: "适合领域：创意策划、营销、教育、心理咨询、演艺、写作、创业、公益等需要创造力和感染力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#enfp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#A855F7"/><circle cx="115" cy="70" r="8" fill="#A855F7"/><path d="M80 100 Q 100 115 120 100" stroke="#A855F7" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="enfp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A855F7"/><stop offset="100%" stop-color="#9333EA"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "竞选者型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ENTP: {
                 name: "辩论家型 - 聪明的发明家",
@@ -689,8 +697,8 @@
                     "你善于发现问题并提出创新的解决方案，能在复杂的情况中快速找到突破口。"
                 ],
                 suitableFields: "适合领域：律师、咨询、创业、营销、媒体、科研、设计、公关等需要思维敏捷和创新能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#entp-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#2563EB"/><circle cx="115" cy="70" r="8" fill="#2563EB"/><path d="M80 100 Q 100 105 120 100" stroke="#2563EB" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="entp-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2563EB"/><stop offset="100%" stop-color="#1D4ED8"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "辩论家型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ESTJ: {
                 name: "总经理型 - 高效的管理者",
@@ -706,8 +714,8 @@
                     "你善于将复杂的任务分解为可执行的步骤，确保目标的顺利实现。"
                 ],
                 suitableFields: "适合领域：企业管理、行政管理、军警、销售管理、项目管理、金融、法律等需要领导能力和执行力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#estj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#D946EF"/><circle cx="115" cy="70" r="8" fill="#D946EF"/><path d="M80 100 Q 100 100 120 100" stroke="#D946EF" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="estj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D946EF"/><stop offset="100%" stop-color="#C026D3"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "总经理型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ESFJ: {
                 name: "执政官型 - 热心的提供者",
@@ -723,8 +731,8 @@
                     "你对自己的社会责任有清晰的认知，愿意为集体利益付出努力。"
                 ],
                 suitableFields: "适合领域：人力资源、公关、教育、医疗、酒店管理、销售、行政管理、客服管理等需要社交能力和协调能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#esfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#0EA5E9"/><circle cx="115" cy="70" r="8" fill="#0EA5E9"/><path d="M80 100 Q 100 110 120 100" stroke="#0EA5E9" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="esfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#0284C7"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "执政官型人格"),
+                bgImage: SHARED_IMAGE_URL
             },
             ENFJ: {
                 name: "教育家型 - 富有魅力的领导者",
@@ -740,8 +748,8 @@
                     "你善于沟通和说服，能将自己的愿景转化为团队的共同目标。"
                 ],
                 suitableFields: "适合领域：教育、心理咨询、企业管理、公关、培训、公益、政治、文化传播等需要领导力和共情能力的领域。",
-                avatar: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" rx="50" fill="url(#enfj-gradient)"/><circle cx="100" cy="80" r="50" fill="#F3F4F6"/><circle cx="85" cy="70" r="8" fill="#16A34A"/><circle cx="115" cy="70" r="8" fill="#16A34A"/><path d="M80 100 Q 100 115 120 100" stroke="#16A34A" stroke-width="4" fill="none"/><rect x="70" y="130" width="60" height="40" rx="5" fill="#E5E7EB"/><defs><linearGradient id="enfj-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#16A34A"/><stop offset="100%" stop-color="#15803D"/></linearGradient></defs></svg>`,
-                bgImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                avatar: createAvatarImg(SHARED_IMAGE_URL, "教育家型人格"),
+                bgImage: SHARED_IMAGE_URL
             }
         };
 
@@ -984,7 +992,7 @@
                 // 设置背景大图
                 const bgImageContainer = document.getElementById('bg-image-container');
                 if (bgImageContainer && personality.bgImage) {
-                    bgImageContainer.innerHTML = `<img src="${personality.bgImage}" alt="${personality.name} 背景图" />`;
+                    bgImageContainer.innerHTML = `<img src="${personality.bgImage}" alt="${personality.name} 背景图" crossOrigin="anonymous"/>`;
                 }
                 
                 // 切换页面显示
@@ -1021,26 +1029,56 @@
                 });
             }
 
-            // 绑定保存按钮事件 - 修改为保存PNG格式
+            // 绑定保存按钮事件 - 修正保存图片异常问题
             const saveBtn = document.getElementById('save-btn');
             if (saveBtn) {
                 saveBtn.addEventListener('click', function() {
                     const resultCard = document.getElementById('result-card-main');
                     
-                    html2canvas(resultCard, {
-                        backgroundColor: null,
-                        scale: 2,
-                        useCORS: true
-                    }).then(canvas => {
-                        // 将canvas转换为PNG图片URL（修改为PNG格式）
-                        const imgData = canvas.toDataURL('image/png');
-                        
-                        // 创建下载链接
-                        const link = document.createElement('a');
-                        link.download = `16人格测试结果-${currentPersonalityType}.png`; // 改为PNG扩展名
-                        link.href = imgData;
-                        link.click();
-                    });
+                    // 显示加载提示
+                    saveBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>保存中...';
+                    saveBtn.disabled = true;
+                    
+                    // 添加一些延迟，确保所有图片加载完成
+                    setTimeout(() => {
+                        html2canvas(resultCard, {
+                            backgroundColor: '#ffffff',
+                            scale: 2,
+                            useCORS: true, // 允许跨域图片
+                            allowTaint: true, // 允许污染画布
+                            logging: false, // 关闭日志
+                            imageTimeout: 15000, // 设置图片加载超时时间为15秒
+                            onclone: function(clonedDoc) {
+                                // 克隆文档时，确保所有图片都有crossOrigin属性
+                                const images = clonedDoc.querySelectorAll('img');
+                                images.forEach(img => {
+                                    if (!img.hasAttribute('crossOrigin')) {
+                                        img.setAttribute('crossOrigin', 'anonymous');
+                                    }
+                                });
+                            }
+                        }).then(canvas => {
+                            // 将canvas转换为PNG图片URL
+                            const imgData = canvas.toDataURL('image/png', 1.0); // 最高质量
+                            
+                            // 创建下载链接
+                            const link = document.createElement('a');
+                            link.download = `16人格测试结果-${currentPersonalityType}.png`;
+                            link.href = imgData;
+                            link.click();
+                            
+                            // 恢复按钮状态
+                            saveBtn.innerHTML = '<i class="fa fa-download mr-2"></i>保存到本地';
+                            saveBtn.disabled = false;
+                        }).catch(error => {
+                            console.error('保存图片时出错:', error);
+                            alert('保存失败，请重试或截图保存');
+                            
+                            // 恢复按钮状态
+                            saveBtn.innerHTML = '<i class="fa fa-download mr-2"></i>保存到本地';
+                            saveBtn.disabled = false;
+                        });
+                    }, 500); // 500毫秒延迟，确保内容渲染完成
                 });
             }
 
